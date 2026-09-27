@@ -107,6 +107,10 @@
     // The version of Lua targeted by the parser (string; allowed values are
     // '5.1', '5.2', '5.3', '5.4', 'FiveM5.4').
     luaVersion: "FiveM5.4",
+    // Whether `continue` is a keyword. Defaults to true for Lua 5.2 and newer,
+    // and false for 5.1, where `continue` is an ordinary identifier. Set this to
+    // override the default for any version.
+    continueKeyword: undefined,
     // Encoding mode: how to interpret code units higher than U+007F in input
     encodingMode: "none",
     // Debug Mode: Outputs a log of all current inner workings
@@ -277,6 +281,7 @@
     ambiguousSyntax:
       "ambiguous syntax (function call x new statement) near '%1'",
     noLoopToBreak: "no loop to break near '%1'",
+    noLoopToContinue: "no loop to continue near '%1'",
     labelAlreadyDefined: "label '%1' already defined on line %2",
     labelNotVisible: "no visible label '%1' for <goto>",
     gotoJumpInLocalScope: "<goto %1> jumps into the scope of local '%2'",
@@ -302,6 +307,12 @@
     breakStatement: function () {
       return {
         type: "BreakStatement",
+      };
+    },
+
+    continueStatement: function () {
+      return {
+        type: "ContinueStatement",
       };
     },
 
@@ -1803,7 +1814,9 @@
       case 6:
         return "elseif" === id || "repeat" === id || "return" === id;
       case 8:
-        return "function" === id;
+        // `continue` is a keyword from Lua 5.2 onwards. In 5.1 it stays a
+        // perfectly good identifier, so it must not be reserved there.
+        return "function" === id || (features.continueKeyword && "continue" === id);
     }
     return false;
   }
@@ -2227,6 +2240,17 @@
           if (!flowContext.isInLoop())
             raise(token, errors.noLoopToBreak, token.value);
           return parseBreakStatement();
+        case "continue":
+          // Only a keyword where the language defines it, so 5.1 code that uses
+          // `continue` as an identifier still parses. Falling through to the
+          // statement parser is correct there: it becomes an assignment or call.
+          if (features.continueKeyword) {
+            next();
+            if (!flowContext.isInLoop())
+              raise(token, errors.noLoopToContinue, token.value);
+            return parseContinueStatement();
+          }
+          break;
         case "do":
           next();
           return parseDoStatement(flowContext);
@@ -2277,6 +2301,13 @@
   function parseBreakStatement() {
     consume(";");
     return finishNode(ast.breakStatement());
+  }
+
+  //     continue ::= 'continue'
+
+  function parseContinueStatement() {
+    consume(";");
+    return finishNode(ast.continueStatement());
   }
 
   //     goto ::= 'goto' Name
@@ -3157,6 +3188,7 @@
   var versionFeatures = {
     5.1: {},
     5.2: {
+      continueKeyword: true,
       labels: true,
       emptyStatement: true,
       hexEscapes: true,
@@ -3165,6 +3197,7 @@
       relaxedBreak: true,
     },
     5.3: {
+      continueKeyword: true,
       labels: true,
       emptyStatement: true,
       hexEscapes: true,
@@ -3176,6 +3209,7 @@
       relaxedBreak: true,
     },
     5.4: {
+      continueKeyword: true,
       labels: true,
       emptyStatement: true,
       hexEscapes: true,
@@ -3190,6 +3224,7 @@
       relaxedUTF8: true,
     },
     "FiveM5.4": {
+      continueKeyword: true,
       labels: true,
       emptyStatement: true,
       hexEscapes: true,
@@ -3214,6 +3249,7 @@
       // XXX: LuaJIT language features may depend on compilation options; may need to
       // rethink how to handle this. Specifically, there is a LUAJIT_ENABLE_LUA52COMPAT
       // that removes contextual goto. Maybe add 'LuaJIT-5.2compat' as well?
+      continueKeyword: true,
       labels: true,
       contextualGoto: true,
       hexEscapes: true,
@@ -3263,6 +3299,10 @@
     features = assign({}, versionFeatures[options.luaVersion]);
     if (options.extendedIdentifiers !== void 0)
       features.extendedIdentifiers = !!options.extendedIdentifiers;
+    // `continue` is a keyword from Lua 5.2 onwards. Allow it to be forced on or
+    // off for any version, the same way `extendedIdentifiers` is configurable.
+    if (options.continueKeyword !== void 0)
+      features.continueKeyword = !!options.continueKeyword;
 
     if (
       !Object.prototype.hasOwnProperty.call(encodingModes, options.encodingMode)

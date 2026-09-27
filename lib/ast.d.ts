@@ -18,6 +18,8 @@ export interface LabelStatement extends Base<"LabelStatement"> {
 
 export type BreakStatement = Base<"BreakStatement">;
 
+export type ContinueStatement = Base<"ContinueStatement">;
+
 export interface GotoStatement extends Base<"GotoStatement"> {
     label: Identifier;
 }
@@ -233,6 +235,7 @@ export type Expression =
 export type Statement =
     | LabelStatement
     | BreakStatement
+    | ContinueStatement
     | GotoStatement
     | ReturnStatement
     | IfStatement

@@ -30,7 +30,13 @@ interface ParseOptions {
      * The identifier will be passed as the only parameter.
      */
     onLocalDeclaration: null | ((name: string) => void);
-    luaVersion: "5.1" | "5.2" | "5.3" | "5.4" | "FiveM5.4";
+    luaVersion: "5.1" | "5.2" | "5.3" | "5.4" | "FiveM5.4" | "LuaJIT";
+    /**
+     * Whether `continue` is a keyword. Defaults to true for Lua 5.2 and newer,
+     * and false for 5.1, where `continue` is an ordinary identifier. Set this to
+     * override the default for any version.
+     */
+    continueKeyword?: boolean;
     /**
      * Whether to allow code points ≥ U+0080 in identifiers, like LuaJIT does.
      * See 'Note on character encodings' below if you wish to use this option.
