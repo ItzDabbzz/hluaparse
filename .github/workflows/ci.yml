@@ -88,14 +88,19 @@ jobs:
       - name: Run tests
         run: |
           cd test
-          export LUAPARSE_ENTRY=../dist/luaparse.es5
+          # Rhino has no `process`, so LUAPARSE_ENTRY in the environment is
+          # never seen. `-e` is evaluated in the same global scope as the
+          # script, so this is the only way to tell it which build to load.
+          DEFINE='var LUAPARSE_ENTRY="../dist/luaparse.es5";'
           if [ "${{ matrix.source }}" = "maven" ]; then
             # ":" is the classpath separator on the Linux runner; ";" is
             # Windows-only and silently resolves to a single bogus path here.
             java -cp "/opt/rhino.jar:/opt/rhino-tools.jar" \
-              org.mozilla.javascript.tools.shell.Main -opt -1 runner.js | ../.github/tap_check.bash
+              org.mozilla.javascript.tools.shell.Main -opt -1 -e "$DEFINE" runner.js \
+              | ../.github/tap_check.bash
           else
-            java -jar /opt/rhino.jar -opt -1 runner.js | ../.github/tap_check.bash
+            java -jar /opt/rhino.jar -opt -1 -e "$DEFINE" runner.js \
+              | ../.github/tap_check.bash
           fi
 
   run-tests-ringojs:

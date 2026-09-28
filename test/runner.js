@@ -1,4 +1,4 @@
-/*global require, define, exports, load, console, print, module, emit, process, __loadScript, __dirname */
+/*global require, define, exports, load, console, print, module, emit, process, __loadScript, __dirname, LUAPARSE_ENTRY */
 (function (root) {
   var isLoader = typeof define === 'function' && !!define.amd
     , isModule = typeof require === 'function' && typeof exports === 'object' && exports && !isLoader
@@ -72,9 +72,24 @@
   // RingoJS also reports isModule -- it has a CommonJS shim -- but exposes no
   // __dirname, so that case has to be excluded explicitly or the reference
   // throws before a single test runs.
+  //
+  // Rhino has no `process`, so the environment variable is invisible there and
+  // it silently fell back to the ES6 source it cannot parse. Its shell offers
+  // no -define either, but a script can read its own `arguments`, so the entry
+  // is also accepted as the first command-line argument after runner.js.
+  //
+  // Rhino has no `process`, so the environment variable is invisible there and
+  // it silently fell back to the ES6 source it cannot parse. Its shell accepts
+  // no -define, but `java -jar rhino.jar -e 'var X=...'` evaluates in the same
+  // global scope as the script, so a global set that way is honoured here.
+  //
+  // A command-line argument is not usable: this file's body is an IIFE, so
+  // `arguments` inside it is the IIFE's own, not the shell's.
   var entry = '../luaparse';
   if (typeof process === 'object' && process.env && process.env.LUAPARSE_ENTRY) {
     entry = process.env.LUAPARSE_ENTRY;
+  } else if (typeof LUAPARSE_ENTRY === 'string' && LUAPARSE_ENTRY) {
+    entry = LUAPARSE_ENTRY;
   }
   // Prefer a path anchored to this file. Under Node that removes any
   // dependence on the process cwd. Not every engine that looks like a module

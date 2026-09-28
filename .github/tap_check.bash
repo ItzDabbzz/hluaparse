@@ -10,18 +10,31 @@ plan=0
 ok_count=0
 started=0
 
+# Some engines prefix every line with a log level, e.g. Rhino's shell emits
+# "INFO ok 1 <name>". Strip a leading "INFO "/"DEBUG "/"WARN " so the TAP
+# grammar can be matched, but keep printing the original line.
+strip_prefix() {
+	case "$1" in
+		INFO\ *|DEBUG\ *|WARN\ *) printf '%s' "${1#* }" ;;
+		*) printf '%s' "$1" ;;
+	esac
+}
+
 while read -r line; do
 	echo "$line"
 
-	if [[ $line == 'not ok '* ]] ; then
+	tap=$(strip_prefix "$line")
+
+	if [[ $tap == 'not ok '* ]] ; then
 		ret=1
-	elif [[ $line == 'ok '* ]] ; then
+		started=1
+	elif [[ $tap == 'ok '* ]] ; then
 		ok_count=$((ok_count + 1))
 		started=1
-	elif [[ $line == '1..'* ]] ; then
+	elif [[ $tap == '1..'* ]] ; then
 		plan=$((plan + 1))
 		started=1
-	elif [[ $line == 'Bail out!'* ]] ; then
+	elif [[ $tap == 'Bail out!'* ]] ; then
 		ret=1
 		started=1
 	fi
