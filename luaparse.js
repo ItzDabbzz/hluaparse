@@ -1617,27 +1617,13 @@
   function scanCStyleComment() {
     tokenStart = index; // /
 
-    var character = input.charAt(index),
-      content = "",
-      isLong = false,
-      commentStart = index,
-      lineStartComment = lineStart,
+    var lineStartComment = lineStart,
       lineComment = line;
 
-    content = readLongCStyleString(true);
-
-    // This wasn't a multiline comment after all.
-    if (false === content) content = character;
-    else isLong = true;
-
-    // Scan until next line as long as it's not a multiline comment.
-    if (!isLong) {
-      while (index < length) {
-        if (isLineTerminator(input.charCodeAt(index))) break;
-        ++index;
-      }
-      if (options.comments) content = input.slice(commentStart, index);
-    }
+    // readLongCStyleString either returns the comment body or raises
+    // unfinishedLongComment, so a C-style comment always runs to its
+    // `*/` terminator. There is no single-line fallback path.
+    var content = readLongCStyleString(true);
 
     if (options.comments) {
       var node = ast.cStyleComment(content, input.slice(tokenStart, index));
