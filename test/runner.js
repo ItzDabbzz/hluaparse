@@ -1,4 +1,4 @@
-/*global require, define, exports, load, console, print, module, emit, process, __loadScript */
+/*global require, define, exports, load, console, print, module, emit, process, __loadScript, __dirname */
 (function (root) {
   var isLoader = typeof define === 'function' && !!define.amd
     , isModule = typeof require === 'function' && typeof exports === 'object' && exports && !isLoader
@@ -59,17 +59,36 @@
   // The library is resolved after the loader is defined, because on
   // script-loading engines it has to be evaluated first and then looked up
   // under its exported global name.
-  var luaparse = isModule ? require('../luaparse') : null;
+  //
+  // LUAPARSE_ENTRY points the suite at a different build of the same parser.
+  // The ES5-only engines in the CI matrix cannot parse the ES6 source, so
+  // they are run against dist/luaparse.es5.js instead. It is generated from
+  // luaparse.js by scripts/build-es5 and is behaviourally identical.
+  //
+  // The path is always relative to this file's directory. Under Node the
+  // engine is launched with `node test/runner.js` from the repository root,
+  // so require() would otherwise resolve it against the wrong directory --
+  // resolve it explicitly instead.
+  var entry = '../luaparse';
+  if (typeof process === 'object' && process.env && process.env.LUAPARSE_ENTRY) {
+    entry = process.env.LUAPARSE_ENTRY;
+  }
+  if (isModule && entry.charAt(0) === '.') {
+    entry = __dirname + '/' + entry;
+  }
+  var entryFile = entry.replace(/\.js$/, '') + '.js';
+
+  var luaparse = isModule ? require(entry) : null;
 
   if (!isModule) {
-    if (isEngine) root.load('../luaparse.js');
+    if (isEngine) root.load(entryFile);
     else if (typeof Duktape !== 'undefined' && typeof readFile === 'function') {
       makeLoader(function (filename) {
         /*global readFile, TextDecoder */
         return (new TextDecoder('utf-8')).decode(readFile(filename));
-      })('hluaparse', '../luaparse.js');
+      })('hluaparse', entryFile);
     } else if (typeof __loadScript !== 'undefined') {
-      __loadScript('../luaparse.js');
+      __loadScript(entryFile);
     }
     // `fivem-luaparse` is only addressable in bracket form; see the UMD
     // wrapper, which assigns both names to the same object.

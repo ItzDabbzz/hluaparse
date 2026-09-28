@@ -59,14 +59,21 @@ parsing the construct and recording whether it succeeded.
 | Safe navigation `?.` | | | | | | ✅ | |
 | Non-English identifiers | | | | | | ✅ | |
 
-Two deliberate divergences, both under `FiveM5.4`:
+The default is **Lua 5.5**, the newest supported release. Pass an explicit
+`luaVersion` to target something else — stock `5.1` through `5.4` are all
+available and all reject anything the real compiler rejects.
+
+`FiveM5.4` is a deliberate divergence, kept available but no longer the
+default. Under it:
 
 - **Non-English identifiers are accepted.** `local имя = 1` parses. Stock Lua
   rejects this in every version, which is why it lives behind its own option.
-- **FiveM syntax is accepted.** Its runtime allows it, so the parser matches it.
+- **FiveM syntax is accepted.** Safe navigation (`?.`) and compound assignment
+  (`+=`) are extensions, and its runtime allows them, so the parser matches.
 
-The stock profiles reject those constructs rather than silently allowing them,
-so a mistake surfaces instead of shipping.
+Under the stock profiles those constructs are rejected rather than silently
+allowed, so a mistake surfaces instead of shipping. FiveM is an opt-in now, not
+something you have to opt out of.
 
 ## The AST
 
@@ -98,7 +105,7 @@ reshape the tree. The `onCreateNode` callback is the supported way to observe it
 
 | Option | Default | Meaning |
 | --- | --- | --- |
-| `luaVersion` | `'FiveM5.4'` | `'5.1'` `'5.2'` `'5.3'` `'5.4'` `'5.5'` `'FiveM5.4'` `'LuaJIT'` |
+| `luaVersion` | `'5.5'` | `'5.1'` `'5.2'` `'5.3'` `'5.4'` `'5.5'` `'FiveM5.4'` `'LuaJIT'` |
 | `wait` | `false` | Signal end of input yourself, via the returned parser object |
 | `comments` | `true` | Collect comments into `chunk.comments` |
 | `scope` | `false` | Track identifier scopes and `isLocal` |
@@ -181,6 +188,12 @@ no longer tested. The oldest Duktape and QuickJS builds are kept deliberately �
 they are the floor for the embedded engines this parser is most often dropped
 into.
 
+`luaparse.js` is modern ES6, which those older embeddable engines cannot parse.
+`dist/luaparse.es5.js` is a downlevelled build generated from it
+(`npm run build-es5`), and CI runs the ES5-only engines against that instead.
+It is generated, never hand-edited, and behaves identically — both files pass
+the full suite.
+
 Beyond its own suite, releases are checked differentially against real Lua
 compilers: a corpus of 548 constructs is parsed by both `hluaparse` and `luac`,
 and any disagreement on accept-or-reject is a bug. That process is how the Lua
@@ -216,8 +229,8 @@ differential work described above.
 - Hex float fractions are correctly rejected on 5.1, where upstream accepts them.
 - Unreachable code paths were removed rather than excluded from coverage.
 
-If you depend on strict upstream behaviour, note that `FiveM5.4` is the
-default here. Pass an explicit `luaVersion` to pin behaviour.
+The default is `5.5` here, where upstream defaults to `5.1`. Pass an explicit
+`luaVersion` if you need to pin behaviour.
 
 ## Credits
 

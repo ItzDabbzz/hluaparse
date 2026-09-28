@@ -27,7 +27,7 @@ jobs:
         version: [20.x, 24.x]
 
   run-tests-node:
-    name: Test in Node.js
+    name: Test in Node.js (ES6 source)
     needs: lint
     runs-on: ubuntu-latest
     strategy:
@@ -43,7 +43,7 @@ jobs:
       - run: node test/runner.js | .github/tap_check.bash
 
   run-tests-bun:
-    name: Test in Bun
+    name: Test in Bun (ES6 source)
     needs: lint
     runs-on: ubuntu-latest
     strategy:
@@ -58,7 +58,7 @@ jobs:
       - run: bun test/runner.js | .github/tap_check.bash
 
   run-tests-rhino:
-    name: Test in Rhino
+    name: Test in Rhino (ES5 build)
     needs: lint
     runs-on: ubuntu-latest
     strategy:
@@ -74,6 +74,8 @@ jobs:
             source: maven
     steps:
       - uses: actions/checkout@v4
+      - name: Build the ES5 artifact
+        run: npm ci && node scripts/build-es5
       - name: Download Rhino ${{ matrix.version }} from ${{ matrix.source }}
         run: |
           VERSION="${{ matrix.version }}"
@@ -86,6 +88,7 @@ jobs:
       - name: Run tests
         run: |
           cd test
+          export LUAPARSE_ENTRY=../dist/luaparse.es5
           if [ "${{ matrix.source }}" = "maven" ]; then
             java -cp "/opt/rhino.jar;/opt/rhino-tools.jar" \
               org.mozilla.javascript.tools.shell.Main -opt -1 runner.js | ../.github/tap_check.bash
@@ -94,7 +97,7 @@ jobs:
           fi
 
   run-tests-ringojs:
-    name: Test in RingoJS
+    name: Test in RingoJS (ES5 build)
     needs: lint
     runs-on: ubuntu-latest
     strategy:
@@ -103,6 +106,8 @@ jobs:
         version: ['4.0.0']
     steps:
       - uses: actions/checkout@v4
+      - name: Build the ES5 artifact
+        run: npm ci && node scripts/build-es5
       - name: Download and unpack RingoJS ${{ matrix.version }}
         run: |
           VERSION="${{ matrix.version }}"
@@ -116,10 +121,13 @@ jobs:
           sudo ln -s "/opt/ringojs-${VERSION}/bin/ringo" /usr/local/bin/ringo
           sudo chmod +x /usr/local/bin/ringo
       - name: Run tests
-        run: ringo -o -1 test/runner.js 2>&1 | .github/tap_check.bash
+        # runner.js is executed from the repo root, so the ES5 entry is
+        # dist/luaparse.es5 (paths are resolved relative to test/, where the
+        # runner lives, hence the ../ on the other engines).
+        run: LUAPARSE_ENTRY=../dist/luaparse.es5 ringo -o -1 test/runner.js 2>&1 | .github/tap_check.bash
 
   run-tests-quickjs:
-    name: Test in QuickJS
+    name: Test in QuickJS (ES5 build)
     needs: lint
     runs-on: ubuntu-latest
     strategy:
@@ -128,6 +136,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: Build the ES5 artifact
+        run: npm ci && node scripts/build-es5
       - name: Install QuickJS ${{ matrix.version }}
         run: |
           wget "https://bellard.org/quickjs/binary_releases/quickjs-linux-x86_64-${{ matrix.version }}.zip" -O quickjs.zip
@@ -138,10 +148,10 @@ jobs:
         # QuickJS likes to throw stack overflow errors when running the test suite at that limit,
         # so we increase it to 8 MiB. The issue is intermittent and non-deterministic;
         # it may or may not be an engine bug
-        run: cd test; qjs --stack-size 8388608 --std runner.js | ../.github/tap_check.bash
+        run: cd test; LUAPARSE_ENTRY=../dist/luaparse.es5 qjs --stack-size 8388608 --std runner.js | ../.github/tap_check.bash
 
   run-tests-duktape:
-    name: Test in Duktape
+    name: Test in Duktape (ES5 build)
     needs: lint
     runs-on: ubuntu-latest
     strategy:
@@ -149,6 +159,8 @@ jobs:
         version: [2.4.0, 2.5.0, 2.6.0, 2.7.0]
     steps:
       - uses: actions/checkout@v4
+      - name: Build the ES5 artifact
+        run: npm ci && node scripts/build-es5
       - name: Build and install Duktape ${{ matrix.version }}
         run: |
           PACKAGE="duktape-${{ matrix.version }}"
@@ -159,7 +171,7 @@ jobs:
           sudo install -Dm755 "$PACKAGE/duk" /usr/local/bin/duk
           rm -rf "$PACKAGE.tar.xz" "$PACKAGE/"
       - name: Run tests
-        run: cd test; duk runner.js | ../.github/tap_check.bash
+        run: cd test; LUAPARSE_ENTRY=../dist/luaparse.es5 duk runner.js | ../.github/tap_check.bash
 
   check-coverage:
     name: Coverage analysis
