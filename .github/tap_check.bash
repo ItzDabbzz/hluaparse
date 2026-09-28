@@ -9,6 +9,7 @@ ret=0
 plan=0
 ok_count=0
 started=0
+saw_summary=0
 
 # Some engines prefix every line with a log level, e.g. Rhino's shell emits
 # "INFO ok 1 <name>". Strip a leading "INFO "/"DEBUG "/"WARN " so the TAP
@@ -37,6 +38,15 @@ while read -r line; do
 	elif [[ $tap == 'Bail out!'* ]] ; then
 		ret=1
 		started=1
+	elif [[ $tap == '# fail '* ]] ; then
+		# The spec reporter prints its "# fail" summary only once the whole
+		# suite has run. Its presence is what distinguishes a complete run
+		# from one whose engine was killed partway: a truncated run emits a
+		# valid "ok" for everything it managed and then just stops.
+		saw_summary=1
+		if [ "${tap#\# fail }" != "0" ]; then
+			ret=1
+		fi
 	fi
 done
 
@@ -51,8 +61,13 @@ if [ "$ok_count" -eq 0 ] && [ "$ret" -eq 0 ]; then
 	exit 1
 fi
 
-# NOTE: a plan/result count comparison is deliberately absent. The runner
-# declares one TAP test per spec case, while `--console` reports assertions,
-# so the two numbers are not comparable.
+# No summary means the engine never finished the suite. This catches a real
+# failure mode: an engine that is killed partway through still reports every
+# test it managed as a passing "ok" and exits 0, so counting results alone
+# cannot tell it apart from a full run.
+if [ "$saw_summary" -eq 0 ]; then
+	echo "tap_check: run produced no completion summary - the suite did not finish" >&2
+	exit 1
+fi
 
 exit "$ret"
