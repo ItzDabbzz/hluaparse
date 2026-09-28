@@ -1041,226 +1041,6 @@
       }
     },
     {
-      "source": "a = 0xf.",
-      "result": {
-        "type": "Chunk",
-        "body": [
-          {
-            "type": "AssignmentStatement",
-            "variables": [
-              {
-                "type": "Identifier",
-                "name": "a",
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 0
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1
-                  }
-                },
-                "range": [
-                  0,
-                  1
-                ],
-                "isLocal": false
-              }
-            ],
-            "init": [
-              {
-                "type": "NumericLiteral",
-                "value": 15,
-                "raw": "0xf.",
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 4
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 8
-                  }
-                },
-                "range": [
-                  4,
-                  8
-                ]
-              }
-            ],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 0
-              },
-              "end": {
-                "line": 1,
-                "column": 8
-              }
-            },
-            "range": [
-              0,
-              8
-            ]
-          }
-        ],
-        "loc": {
-          "start": {
-            "line": 1,
-            "column": 0
-          },
-          "end": {
-            "line": 1,
-            "column": 8
-          }
-        },
-        "range": [
-          0,
-          8
-        ],
-        "comments": [],
-        "globals": [
-          {
-            "type": "Identifier",
-            "name": "a",
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 0
-              },
-              "end": {
-                "line": 1,
-                "column": 1
-              }
-            },
-            "range": [
-              0,
-              1
-            ],
-            "isLocal": false
-          }
-        ]
-      },
-      "options": {
-        "comments": true,
-        "locations": true,
-        "ranges": true,
-        "scope": true,
-        "luaVersion": "5.1"
-      }
-    },
-    {
-      "source": "a = 0xf.3",
-      "result": {
-        "type": "Chunk",
-        "body": [
-          {
-            "type": "AssignmentStatement",
-            "variables": [
-              {
-                "type": "Identifier",
-                "name": "a",
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 0
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1
-                  }
-                },
-                "range": [
-                  0,
-                  1
-                ],
-                "isLocal": false
-              }
-            ],
-            "init": [
-              {
-                "type": "NumericLiteral",
-                "value": 15.1875,
-                "raw": "0xf.3",
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 4
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 9
-                  }
-                },
-                "range": [
-                  4,
-                  9
-                ]
-              }
-            ],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 0
-              },
-              "end": {
-                "line": 1,
-                "column": 9
-              }
-            },
-            "range": [
-              0,
-              9
-            ]
-          }
-        ],
-        "loc": {
-          "start": {
-            "line": 1,
-            "column": 0
-          },
-          "end": {
-            "line": 1,
-            "column": 9
-          }
-        },
-        "range": [
-          0,
-          9
-        ],
-        "comments": [],
-        "globals": [
-          {
-            "type": "Identifier",
-            "name": "a",
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 0
-              },
-              "end": {
-                "line": 1,
-                "column": 1
-              }
-            },
-            "range": [
-              0,
-              1
-            ],
-            "isLocal": false
-          }
-        ]
-      },
-      "options": {
-        "comments": true,
-        "locations": true,
-        "ranges": true,
-        "scope": true,
-        "luaVersion": "5.1"
-      }
-    },
-    {
       "source": "a = 0xfp",
       "result": "[1:9] malformed number near '0xfp'",
       "options": {
@@ -1373,6 +1153,28 @@
           }
         ]
       },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
+    },
+    {
+      "source": "a = 0xf.p",
+      "result": "[1:7] unexpected symbol '.' near 'p'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
+    },
+    {
+      "source": "a = 0xf.3p",
+      "result": "[1:7] unexpected number '.3' near 'p'",
       "options": {
         "comments": true,
         "locations": true,
@@ -3984,6 +3786,226 @@
         "ranges": true,
         "scope": true,
         "luaVersion": "5.1"
+      }
+    },
+    {
+      "source": "a = 0xf.",
+      "result": {
+        "type": "Chunk",
+        "body": [
+          {
+            "type": "AssignmentStatement",
+            "variables": [
+              {
+                "type": "Identifier",
+                "name": "a",
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 1
+                  }
+                },
+                "range": [
+                  0,
+                  1
+                ],
+                "isLocal": false
+              }
+            ],
+            "init": [
+              {
+                "type": "NumericLiteral",
+                "value": 15,
+                "raw": "0xf.",
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 8
+                  }
+                },
+                "range": [
+                  4,
+                  8
+                ]
+              }
+            ],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 0
+              },
+              "end": {
+                "line": 1,
+                "column": 8
+              }
+            },
+            "range": [
+              0,
+              8
+            ]
+          }
+        ],
+        "loc": {
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 1,
+            "column": 8
+          }
+        },
+        "range": [
+          0,
+          8
+        ],
+        "comments": [],
+        "globals": [
+          {
+            "type": "Identifier",
+            "name": "a",
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 0
+              },
+              "end": {
+                "line": 1,
+                "column": 1
+              }
+            },
+            "range": [
+              0,
+              1
+            ],
+            "isLocal": false
+          }
+        ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.2"
+      }
+    },
+    {
+      "source": "a = 0xf.3",
+      "result": {
+        "type": "Chunk",
+        "body": [
+          {
+            "type": "AssignmentStatement",
+            "variables": [
+              {
+                "type": "Identifier",
+                "name": "a",
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 1
+                  }
+                },
+                "range": [
+                  0,
+                  1
+                ],
+                "isLocal": false
+              }
+            ],
+            "init": [
+              {
+                "type": "NumericLiteral",
+                "value": 15.1875,
+                "raw": "0xf.3",
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 9
+                  }
+                },
+                "range": [
+                  4,
+                  9
+                ]
+              }
+            ],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 0
+              },
+              "end": {
+                "line": 1,
+                "column": 9
+              }
+            },
+            "range": [
+              0,
+              9
+            ]
+          }
+        ],
+        "loc": {
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 1,
+            "column": 9
+          }
+        },
+        "range": [
+          0,
+          9
+        ],
+        "comments": [],
+        "globals": [
+          {
+            "type": "Identifier",
+            "name": "a",
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 0
+              },
+              "end": {
+                "line": 1,
+                "column": 1
+              }
+            },
+            "range": [
+              0,
+              1
+            ],
+            "isLocal": false
+          }
+        ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.2"
       }
     },
     {

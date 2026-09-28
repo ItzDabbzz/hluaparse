@@ -1,0 +1,6 @@
+// { "luaVersion": "FiveM5.4", "safeNavigation": true }
+a = t?.x
+a = t?.x?.y
+a = t?.x?.y?.z
+t?.f()
+a = t?.f(1)

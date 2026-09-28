@@ -1,0 +1,2 @@
+// { "luaVersion": "FiveM5.4", "encodingMode": "x-user-defined" }
+a = "\u{10FFFF} .. \u{200000} .. \u{4000000} .. \u{7FFFFFF}"

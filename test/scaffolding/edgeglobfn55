@@ -1,0 +1,2 @@
+// { "luaVersion": "5.5" }
+global function f() end

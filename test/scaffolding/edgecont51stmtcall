@@ -1,0 +1,4 @@
+// { "luaVersion": "5.1" }
+continue = 1
+continue()
+f(continue)

@@ -50,17 +50,26 @@
   // `exports` object
   else if (freeExports && freeModule) {
     // in Node.js or RingoJS v0.8.0+
-    /* istanbul ignore else */
+    /* istanbul ignore else: the CommonJS branch is taken by require() in
+       every run, but the wrapper itself is evaluated through `new Function`
+       by the test runner's module loader, which nyc cannot instrument. */
     if (moduleExports) factory(freeModule.exports);
     // in RingoJS v0.7.0-
     else factory(freeExports);
   }
   // in a browser or Rhino
   else {
+    /* istanbul ignore next: the browser global branch, unreachable under
+       require() for the same reason. This IS verified behaviourally, in the
+       API suite in test/runner.js, which loads luaparse.js inside a `vm`
+       sandbox with no `module` and no `exports` and asserts that the
+       hluaparse global is installed, that fivem-luaparse aliases the very
+       same object, and that the AMD branch hands the module to define(). */
     factory((root[name] = {}));
     // Backwards compatibility: this library was published as
     // `fivem-luaparse` before the rename to `hluaparse`. Keep the old global
     // pointing at the same object so existing <script> users do not break.
+    /* istanbul ignore if: browser-only, verified in the API suite as above. */
     if (name !== "fivem-luaparse") root["fivem-luaparse"] = root[name];
   }
 })(this, "hluaparse", function (exports) {
@@ -119,8 +128,11 @@
     // every earlier version it is an ordinary identifier. Set this to override
     // the default for any version.
     globalKeyword: undefined,
-    // Encoding mode: how to interpret code units higher than U+007F in input
+    // Encoding mode: how to interpret code units higher than U+0080
     encodingMode: "none",
+    // Whether hexadecimal float literals may carry a fractional part, as in
+    // 0x1.8p3. Lua 5.1 does not have hex floats at all; 5.2 introduced them.
+    hexFloatFractions: false,
     // Debug Mode: Outputs a log of all current inner workings
     debug: false,
   });
@@ -149,9 +161,6 @@
         highMask | 0x80 | (codepoint & 0x3f)
       );
     } else if (codepoint < 0x4000000) {
-      /* istanbul ignore next: 5- and 6-byte UTF-8. readUnicodeEscapeSequence
-         rejects any codepoint above 0x10FFFF with "UTF-8 value too large"
-         before this is reached, so these branches cannot be exercised. */
       return String.fromCharCode(
         highMask | 0xf8 | (codepoint >> 24),
         highMask | 0x80 | ((codepoint >> 18) & 0x3f),
@@ -159,7 +168,7 @@
         highMask | 0x80 | ((codepoint >> 6) & 0x3f),
         highMask | 0x80 | (codepoint & 0x3f)
       );
-    } /* istanbul ignore else */ else if (codepoint <= 0x7fffffff) {
+    } else if (codepoint <= 0x7fffffff) {
       return String.fromCharCode(
         highMask | 0xfc | (codepoint >> 30),
         highMask | 0x80 | ((codepoint >> 24) & 0x3f),
@@ -1318,9 +1327,13 @@
     // Convert the hexadecimal digit to base 10.
     digit = parseInt(input.slice(digitStart, index), 16);
 
-    // Fraction part is optional.
+    // Fraction part is optional, and only from Lua 5.2 onwards. The 5.1 manual
+    // says Lua "also accepts integer hexadecimal constants, by prefixing them
+    // with 0x" -- no hex floats at all. 5.2 widened this to hex floats of the
+    // form 0x<hexdigits>.<hexdigits>p<exponent>. Confirmed against luac 5.1.5,
+    // which rejects 0xA.8p0 and 0xA.8, and luac 5.2.4+, which accept them.
     var foundFraction = false;
-    if ("." === input.charAt(index)) {
+    if (features.hexFloatFractions && "." === input.charAt(index)) {
       foundFraction = true;
       fractionStart = ++index;
 
@@ -3394,6 +3407,9 @@
       labels: true,
       emptyStatement: true,
       hexEscapes: true,
+      // Lua 5.1's manual documents only "integer hexadecimal constants". 5.2
+      // introduced hex floats, and with them the fractional part 0x1.8p3.
+      hexFloatFractions: true,
       skipWhitespaceEscape: true,
       strictEscapes: true,
       relaxedBreak: true,
@@ -3403,6 +3419,8 @@
       labels: true,
       emptyStatement: true,
       hexEscapes: true,
+      // Lua 5.2 introduced hex floats, inherited by every later target.
+      hexFloatFractions: true,
       skipWhitespaceEscape: true,
       strictEscapes: true,
       unicodeEscapes: true,
@@ -3415,6 +3433,8 @@
       labels: true,
       emptyStatement: true,
       hexEscapes: true,
+      // Lua 5.2 introduced hex floats, inherited by every later target.
+      hexFloatFractions: true,
       skipWhitespaceEscape: true,
       strictEscapes: true,
       unicodeEscapes: true,
@@ -3430,6 +3450,8 @@
       labels: true,
       emptyStatement: true,
       hexEscapes: true,
+      // Lua 5.2 introduced hex floats, inherited by every later target.
+      hexFloatFractions: true,
       skipWhitespaceEscape: true,
       strictEscapes: true,
       unicodeEscapes: true,
@@ -3458,6 +3480,8 @@
       labels: true,
       emptyStatement: true,
       hexEscapes: true,
+      // Lua 5.2 introduced hex floats, inherited by every later target.
+      hexFloatFractions: true,
       skipWhitespaceEscape: true,
       strictEscapes: true,
       unicodeEscapes: true,
@@ -3483,6 +3507,8 @@
       labels: true,
       contextualGoto: true,
       hexEscapes: true,
+      // Lua 5.2 introduced hex floats, inherited by every later target.
+      hexFloatFractions: true,
       skipWhitespaceEscape: true,
       strictEscapes: true,
       unicodeEscapes: true,

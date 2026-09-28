@@ -11,10 +11,10 @@ a = 1e+9
 a = 1e-1
 a = 0x                                    -- FAIL
 a = 0xf
-a = 0xf.
-a = 0xf.3
 a = 0xfp                                  -- FAIL
 a = 0xfp1
+a = 0xf.p                                  -- FAIL
+a = 0xf.3p                                 -- FAIL
 a = 0xfp+1
 a = 0xfp-1
 a = 0xFP+9
@@ -48,6 +48,8 @@ a = [=[]                                  -- FAIL
 a = [=[x]                                 -- FAIL
 a = [=[x]x                                -- FAIL
 // { "luaVersion": "5.2" }
+a = 0xf.
+a = 0xf.3
 a = "\u"                                  -- FAIL
 a = "\?"                                  -- FAIL
 // { "luaVersion": "LuaJIT" }

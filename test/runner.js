@@ -66,10 +66,34 @@
       , './spec/conditional'
       , './spec/continue'
       , './spec/cstylecomments'
+      , './spec/debugdiagnostics'
       , './spec/debugmode'
       , './spec/do'
       , './spec/encoding'
       , './spec/encodingxuserdefined'
+      , './spec/edgenl'
+      , './spec/edgenlcs'
+      , './spec/edgenllc'
+      , './spec/edgenlls'
+      , './spec/edgeattrname'
+      , './spec/edgeattrstr'
+      , './spec/edgesafenav51'
+      , './spec/edgebreakloop'
+      , './spec/edgebitnot'
+      , './spec/edgeunfinishedcomment'
+      , './spec/edgeunfinishedstring'
+      , './spec/edgebadescape'
+      , './spec/edgeutf8widepseudolatin1'
+      , './spec/edgeutf8widexuserdefined'
+      , './spec/edgecont51stmt'
+      , './spec/edgegotolabel55'
+      , './spec/edgegolabel54'
+      , './spec/edgegotonolabel51'
+      , './spec/edgecont51stmtcall'
+      , './spec/edgesafenavassign'
+      , './spec/edgecont51'
+      , './spec/edgeglobfn55'
+      , './spec/edgeprec'
       , './spec/escapesequences'
       , './spec/expressions'
       , './spec/extendedidentifiers'
@@ -85,6 +109,7 @@
       , './spec/operators'
       , './spec/repeat'
       , './spec/return'
+      , './spec/safenavigation'
       , './spec/scope'
       , './spec/statements'
       , './spec/tableconstructors'
@@ -481,6 +506,78 @@
       "comments": []
     }, 'should support waiting on input');
 
+    // A forward goto needs the label and the jump in the same source, which
+    // the scaffolder cannot express because it treats each line as a case.
+    // This drives findLabel() through both the hit and the miss path.
+    this.equal(luaparse.parse('goto x\n::x::\n', { luaVersion: '5.2' }).body[0].type,
+      'GotoStatement', 'should resolve a forward goto to a later label in 5.2');
+
+    // Test.error() treats a string second argument as the assertion message,
+    // not as the expected text, so check the message ourselves.
+    var gotoError = null;
+    try {
+      luaparse.parse('goto zz', { luaVersion: '5.2' });
+    } catch (exception) {
+      gotoError = exception.message;
+    }
+    this.equal(gotoError, "[1:0] no visible label 'zz' for <goto>",
+      'should reject a goto with no visible label in 5.2');
+
+    // A long form whose opening delimiter is followed immediately by a newline:
+    // consumeEOL() must run so the following line is not reported as line 1.
+    this.deepEqual(luaparse.parse('/*\nx*/', {
+        luaVersion: 'FiveM5.4', cStyleComments: true
+      }).comments[0], {
+        type: 'CStyleComment', value: 'x', raw: '/*\nx*/'
+      }, 'should consume the newline opening a C-style comment');
+
+    this.deepEqual(luaparse.parse('a = [[\nx]]', { luaVersion: 'FiveM5.4' }).body[0].init[0], {
+        type: 'StringLiteral', value: null, raw: '[[\nx]]'
+      }, 'should consume the newline opening a long string');
+    this.deepEqual(luaparse.parse('a = [[\n\nx]]', { luaVersion: 'FiveM5.4' }).body[0].init[0], {
+        type: 'StringLiteral', value: null, raw: '[[\n\nx]]'
+      }, 'should consume the newline opening a long string followed by a blank line');
+
+    // Consecutive newlines: line 1662 only eats the FIRST one, so the scan
+    // loop's own consumeEOL() has to handle the rest.
+    this.equal(luaparse.parse('a = [[\n\nx]]', { luaVersion: 'FiveM5.4' }).body[0].init[0].raw,
+      '[[\n\nx]]', 'should keep scanning past a second newline in a long string');
+
+    this.equal(luaparse.parse('/*\n\nx*/', {
+        luaVersion: 'FiveM5.4', cStyleComments: true
+      }).comments[0].raw, '/*\n\nx*/',
+      'should keep scanning past a second newline in a C-style comment');
+
+    this.equal(luaparse.parse('--[[\n\nx]]', { luaVersion: 'FiveM5.4' }).comments[0].raw,
+      '--[[\n\nx]]', 'should keep scanning past a second newline in a long comment');
+
+    this.deepEqual(luaparse.parse('--[[\nx]]', { luaVersion: 'FiveM5.4' }).comments[0], {
+        type: 'Comment', value: 'x', raw: '--[[\nx]]'
+      }, 'should consume the newline opening a long comment');
+
+    // onCreateNode must fire for nodes the lexer builds by hand, which have no
+    // Marker of their own: C-style comments and named varargs.
+    var commentNodes = [];
+    luaparse.parse('/*c*/ a = 1', {
+        luaVersion: 'FiveM5.4', cStyleComments: true,
+        onCreateNode: function (node) { commentNodes.push(node.type); }
+      });
+    this.equal(commentNodes[0], 'CStyleComment',
+      'onCreateNode fires for a C-style comment');
+
+    var varargNodes = [];
+    luaparse.parse('function f(...a) end', {
+        luaVersion: '5.5',
+        onCreateNode: function (node) { varargNodes.push(node.type); }
+      });
+    this.ok(varargNodes.indexOf('VarargWithName') >= 0,
+      'onCreateNode fires for a named vararg');
+
+    // Streaming with debug on: covers the "waiting for more input" diagnostic,
+    // which only runs on the wait:true path with options.debug set.
+    var debugParse = luaparse.parse({ wait: true, debug: true });
+    this.equal(typeof debugParse.end, 'function', 'debug streaming parser is returned');
+
     var nodes = []
       , createdScopes = 0
       , destroyedScopes = 0
@@ -509,7 +606,46 @@
       "type": "Chunk", "body": [{"type": "ReturnStatement", "arguments": [], "loc": {"start": {"line": 2, "column": 0}, "end": {"line": 2, "column": 6}}, "range": [15, 21]}], "loc": {"start": {"line": 2, "column": 0}, "end": {"line": 2, "column": 6}}, "range": [15, 21], "comments": []
     }, 'should ignore shebangs');
 
-    this.done(11);
+        // Load luaparse.js the way a browser does -- no `module`, no `exports` --
+    // so the UMD wrapper assigns globals. require() never takes those branches.
+    if (typeof require === 'function' && !isEngine) {
+      var fs = require('fs'), vm = require('vm'), pathMod = require('path');
+      var umdSource = fs.readFileSync(pathMod.join(process.cwd(), 'luaparse.js'), 'utf8');
+      var browserGlobal = {};
+      browserGlobal.window = browserGlobal;
+      browserGlobal.global = browserGlobal;
+      vm.createContext(browserGlobal);
+      vm.runInContext(umdSource, browserGlobal, { filename: 'luaparse.js' });
+
+      this.equal(typeof browserGlobal.hluaparse, 'object',
+        'a plain-script load installs the hluaparse global');
+      this.equal(typeof browserGlobal.hluaparse.parse, 'function',
+        'the hluaparse global exposes parse()');
+      this.equal(browserGlobal['fivem-luaparse'], browserGlobal.hluaparse,
+        'the fivem-luaparse global is the same object, not a copy');
+      this.ok(browserGlobal.hluaparse.parse('local a = 1', { luaVersion: 'FiveM5.4' }),
+        'the browser-global copy parses Lua');
+
+      // The wrapper only takes the AMD branch when `define.amd` is an object
+      // (r.js and other optimizers look for exactly that shape), and the
+      // factory populates the exports object it is handed rather than
+      // returning it.
+      var amdExports = null;
+      var amdGlobal = {
+        define: function (deps, factory) { amdExports = {}; factory(amdExports); }
+      };
+      amdGlobal.define.amd = {};
+      amdGlobal.window = amdGlobal;
+      amdGlobal.global = amdGlobal;
+      vm.createContext(amdGlobal);
+      vm.runInContext(umdSource, amdGlobal, { filename: 'luaparse.js' });
+      this.equal(typeof (amdExports && amdExports.parse), 'function',
+        'the AMD branch populates the exports object it is handed');
+      this.equal(amdGlobal.hluaparse, undefined,
+        'no global is created when define() is present');
+    }
+
+    this.done(29);
   });
 
   suite.addTest('Option validation', function() {
