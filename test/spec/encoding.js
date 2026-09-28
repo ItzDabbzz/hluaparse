@@ -12,64 +12,13 @@
     else factory(freeExports);
   }
   else factory((root[name] = {}));
-}(this, 'cstylecomments', function (exports) {
+}(this, 'encoding', function (exports) {
   'use strict';
 
-  exports.name = 'cstylecomments';
+  exports.name = 'encoding';
   exports.spec = [
     {
-      "source": "/* a block comment */",
-      "result": {
-        "type": "Chunk",
-        "body": [],
-        "loc": {
-          "start": {
-            "line": 1,
-            "column": 21
-          },
-          "end": {
-            "line": 1,
-            "column": 21
-          }
-        },
-        "range": [
-          21,
-          21
-        ],
-        "comments": [
-          {
-            "type": "CStyleComment",
-            "value": " a block comment ",
-            "raw": "/* a block comment */",
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 0
-              },
-              "end": {
-                "line": 1,
-                "column": 21
-              }
-            },
-            "range": [
-              0,
-              21
-            ]
-          }
-        ],
-        "globals": []
-      },
-      "options": {
-        "comments": true,
-        "locations": true,
-        "ranges": true,
-        "scope": true,
-        "luaVersion": "FiveM5.4",
-        "cStyleComments": true
-      }
-    },
-    {
-      "source": "a = 1 /* inline */ + 2",
+      "source": "a = \"\\u{41}\"",
       "result": {
         "type": "Chunk",
         "body": [
@@ -98,46 +47,9 @@
             ],
             "init": [
               {
-                "type": "BinaryExpression",
-                "operator": "+",
-                "left": {
-                  "type": "NumericLiteral",
-                  "value": 1,
-                  "raw": "1",
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 4
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 5
-                    }
-                  },
-                  "range": [
-                    4,
-                    5
-                  ]
-                },
-                "right": {
-                  "type": "NumericLiteral",
-                  "value": 2,
-                  "raw": "2",
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 21
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 22
-                    }
-                  },
-                  "range": [
-                    21,
-                    22
-                  ]
-                },
+                "type": "StringLiteral",
+                "value": "A",
+                "raw": "\"\\u{41}\"",
                 "loc": {
                   "start": {
                     "line": 1,
@@ -145,12 +57,12 @@
                   },
                   "end": {
                     "line": 1,
-                    "column": 22
+                    "column": 12
                   }
                 },
                 "range": [
                   4,
-                  22
+                  12
                 ]
               }
             ],
@@ -161,12 +73,12 @@
               },
               "end": {
                 "line": 1,
-                "column": 22
+                "column": 12
               }
             },
             "range": [
               0,
-              22
+              12
             ]
           }
         ],
@@ -177,34 +89,14 @@
           },
           "end": {
             "line": 1,
-            "column": 22
+            "column": 12
           }
         },
         "range": [
           0,
-          22
+          12
         ],
-        "comments": [
-          {
-            "type": "CStyleComment",
-            "value": " inline ",
-            "raw": "/* inline */",
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 6
-              },
-              "end": {
-                "line": 1,
-                "column": 18
-              }
-            },
-            "range": [
-              6,
-              18
-            ]
-          }
-        ],
+        "comments": [],
         "globals": [
           {
             "type": "Identifier",
@@ -232,12 +124,12 @@
         "locations": true,
         "ranges": true,
         "scope": true,
-        "luaVersion": "FiveM5.4",
-        "cStyleComments": true
+        "luaVersion": "5.3",
+        "encodingMode": "pseudo-latin1"
       }
     },
     {
-      "source": "a = 1 /* inline */ + /* another */ 2",
+      "source": "a = \"\\u{80}\"",
       "result": {
         "type": "Chunk",
         "body": [
@@ -266,46 +158,9 @@
             ],
             "init": [
               {
-                "type": "BinaryExpression",
-                "operator": "+",
-                "left": {
-                  "type": "NumericLiteral",
-                  "value": 1,
-                  "raw": "1",
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 4
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 5
-                    }
-                  },
-                  "range": [
-                    4,
-                    5
-                  ]
-                },
-                "right": {
-                  "type": "NumericLiteral",
-                  "value": 2,
-                  "raw": "2",
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 35
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 36
-                    }
-                  },
-                  "range": [
-                    35,
-                    36
-                  ]
-                },
+                "type": "StringLiteral",
+                "value": "Â\u0080",
+                "raw": "\"\\u{80}\"",
                 "loc": {
                   "start": {
                     "line": 1,
@@ -313,12 +168,12 @@
                   },
                   "end": {
                     "line": 1,
-                    "column": 36
+                    "column": 12
                   }
                 },
                 "range": [
                   4,
-                  36
+                  12
                 ]
               }
             ],
@@ -329,12 +184,12 @@
               },
               "end": {
                 "line": 1,
-                "column": 36
+                "column": 12
               }
             },
             "range": [
               0,
-              36
+              12
             ]
           }
         ],
@@ -345,53 +200,14 @@
           },
           "end": {
             "line": 1,
-            "column": 36
+            "column": 12
           }
         },
         "range": [
           0,
-          36
+          12
         ],
-        "comments": [
-          {
-            "type": "CStyleComment",
-            "value": " inline ",
-            "raw": "/* inline */",
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 6
-              },
-              "end": {
-                "line": 1,
-                "column": 18
-              }
-            },
-            "range": [
-              6,
-              18
-            ]
-          },
-          {
-            "type": "CStyleComment",
-            "value": " another ",
-            "raw": "/* another */",
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 21
-              },
-              "end": {
-                "line": 1,
-                "column": 34
-              }
-            },
-            "range": [
-              21,
-              34
-            ]
-          }
-        ],
+        "comments": [],
         "globals": [
           {
             "type": "Identifier",
@@ -419,63 +235,12 @@
         "locations": true,
         "ranges": true,
         "scope": true,
-        "luaVersion": "FiveM5.4",
-        "cStyleComments": true
+        "luaVersion": "5.3",
+        "encodingMode": "pseudo-latin1"
       }
     },
     {
-      "source": "--[[ long bracket ]]",
-      "result": {
-        "type": "Chunk",
-        "body": [],
-        "loc": {
-          "start": {
-            "line": 1,
-            "column": 20
-          },
-          "end": {
-            "line": 1,
-            "column": 20
-          }
-        },
-        "range": [
-          20,
-          20
-        ],
-        "comments": [
-          {
-            "type": "Comment",
-            "value": " long bracket ",
-            "raw": "--[[ long bracket ]]",
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 0
-              },
-              "end": {
-                "line": 1,
-                "column": 20
-              }
-            },
-            "range": [
-              0,
-              20
-            ]
-          }
-        ],
-        "globals": []
-      },
-      "options": {
-        "comments": true,
-        "locations": true,
-        "ranges": true,
-        "scope": true,
-        "luaVersion": "FiveM5.4",
-        "cStyleComments": true
-      }
-    },
-    {
-      "source": "a = 1 --[[ inline ]] + 2",
+      "source": "a = \"\\u{800}\"",
       "result": {
         "type": "Chunk",
         "body": [
@@ -504,46 +269,9 @@
             ],
             "init": [
               {
-                "type": "BinaryExpression",
-                "operator": "+",
-                "left": {
-                  "type": "NumericLiteral",
-                  "value": 1,
-                  "raw": "1",
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 4
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 5
-                    }
-                  },
-                  "range": [
-                    4,
-                    5
-                  ]
-                },
-                "right": {
-                  "type": "NumericLiteral",
-                  "value": 2,
-                  "raw": "2",
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 23
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 24
-                    }
-                  },
-                  "range": [
-                    23,
-                    24
-                  ]
-                },
+                "type": "StringLiteral",
+                "value": "à \u0080",
+                "raw": "\"\\u{800}\"",
                 "loc": {
                   "start": {
                     "line": 1,
@@ -551,12 +279,12 @@
                   },
                   "end": {
                     "line": 1,
-                    "column": 24
+                    "column": 13
                   }
                 },
                 "range": [
                   4,
-                  24
+                  13
                 ]
               }
             ],
@@ -567,12 +295,12 @@
               },
               "end": {
                 "line": 1,
-                "column": 24
+                "column": 13
               }
             },
             "range": [
               0,
-              24
+              13
             ]
           }
         ],
@@ -583,34 +311,14 @@
           },
           "end": {
             "line": 1,
-            "column": 24
+            "column": 13
           }
         },
         "range": [
           0,
-          24
+          13
         ],
-        "comments": [
-          {
-            "type": "Comment",
-            "value": " inline ",
-            "raw": "--[[ inline ]]",
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 6
-              },
-              "end": {
-                "line": 1,
-                "column": 20
-              }
-            },
-            "range": [
-              6,
-              20
-            ]
-          }
-        ],
+        "comments": [],
         "globals": [
           {
             "type": "Identifier",
@@ -638,34 +346,281 @@
         "locations": true,
         "ranges": true,
         "scope": true,
-        "luaVersion": "FiveM5.4",
-        "cStyleComments": true
+        "luaVersion": "5.3",
+        "encodingMode": "pseudo-latin1"
       }
     },
     {
-      "source": "/** doc style */",
+      "source": "a = \"\\u{ffff}\"",
       "result": {
         "type": "Chunk",
-        "body": [],
+        "body": [
+          {
+            "type": "AssignmentStatement",
+            "variables": [
+              {
+                "type": "Identifier",
+                "name": "a",
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 1
+                  }
+                },
+                "range": [
+                  0,
+                  1
+                ],
+                "isLocal": false
+              }
+            ],
+            "init": [
+              {
+                "type": "StringLiteral",
+                "value": "ï¿¿",
+                "raw": "\"\\u{ffff}\"",
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 14
+                  }
+                },
+                "range": [
+                  4,
+                  14
+                ]
+              }
+            ],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 0
+              },
+              "end": {
+                "line": 1,
+                "column": 14
+              }
+            },
+            "range": [
+              0,
+              14
+            ]
+          }
+        ],
         "loc": {
           "start": {
             "line": 1,
-            "column": 16
+            "column": 0
           },
           "end": {
             "line": 1,
-            "column": 16
+            "column": 14
           }
         },
         "range": [
-          16,
-          16
+          0,
+          14
         ],
-        "comments": [
+        "comments": [],
+        "globals": [
           {
-            "type": "CStyleComment",
-            "value": "* doc style ",
-            "raw": "/** doc style */",
+            "type": "Identifier",
+            "name": "a",
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 0
+              },
+              "end": {
+                "line": 1,
+                "column": 1
+              }
+            },
+            "range": [
+              0,
+              1
+            ],
+            "isLocal": false
+          }
+        ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.3",
+        "encodingMode": "pseudo-latin1"
+      }
+    },
+    {
+      "source": "a = \"\\u{10000}\"",
+      "result": {
+        "type": "Chunk",
+        "body": [
+          {
+            "type": "AssignmentStatement",
+            "variables": [
+              {
+                "type": "Identifier",
+                "name": "a",
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 1
+                  }
+                },
+                "range": [
+                  0,
+                  1
+                ],
+                "isLocal": false
+              }
+            ],
+            "init": [
+              {
+                "type": "StringLiteral",
+                "value": "ð\u0090\u0080\u0080",
+                "raw": "\"\\u{10000}\"",
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 15
+                  }
+                },
+                "range": [
+                  4,
+                  15
+                ]
+              }
+            ],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 0
+              },
+              "end": {
+                "line": 1,
+                "column": 15
+              }
+            },
+            "range": [
+              0,
+              15
+            ]
+          }
+        ],
+        "loc": {
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 1,
+            "column": 15
+          }
+        },
+        "range": [
+          0,
+          15
+        ],
+        "comments": [],
+        "globals": [
+          {
+            "type": "Identifier",
+            "name": "a",
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 0
+              },
+              "end": {
+                "line": 1,
+                "column": 1
+              }
+            },
+            "range": [
+              0,
+              1
+            ],
+            "isLocal": false
+          }
+        ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.3",
+        "encodingMode": "pseudo-latin1"
+      }
+    },
+    {
+      "source": "a = \"\\u{10ffff}\"",
+      "result": {
+        "type": "Chunk",
+        "body": [
+          {
+            "type": "AssignmentStatement",
+            "variables": [
+              {
+                "type": "Identifier",
+                "name": "a",
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 1
+                  }
+                },
+                "range": [
+                  0,
+                  1
+                ],
+                "isLocal": false
+              }
+            ],
+            "init": [
+              {
+                "type": "StringLiteral",
+                "value": "ô\u008f¿¿",
+                "raw": "\"\\u{10ffff}\"",
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 16
+                  }
+                },
+                "range": [
+                  4,
+                  16
+                ]
+              }
+            ],
             "loc": {
               "start": {
                 "line": 1,
@@ -682,139 +637,6 @@
             ]
           }
         ],
-        "globals": []
-      },
-      "options": {
-        "comments": true,
-        "locations": true,
-        "ranges": true,
-        "scope": true,
-        "luaVersion": "FiveM5.4",
-        "cStyleComments": true
-      }
-    },
-    {
-      "source": "if a then /* branch */ a = 2 end",
-      "result": {
-        "type": "Chunk",
-        "body": [
-          {
-            "type": "IfStatement",
-            "clauses": [
-              {
-                "type": "IfClause",
-                "condition": {
-                  "type": "Identifier",
-                  "name": "a",
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 3
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 4
-                    }
-                  },
-                  "range": [
-                    3,
-                    4
-                  ],
-                  "isLocal": false
-                },
-                "body": [
-                  {
-                    "type": "AssignmentStatement",
-                    "variables": [
-                      {
-                        "type": "Identifier",
-                        "name": "a",
-                        "loc": {
-                          "start": {
-                            "line": 1,
-                            "column": 23
-                          },
-                          "end": {
-                            "line": 1,
-                            "column": 24
-                          }
-                        },
-                        "range": [
-                          23,
-                          24
-                        ],
-                        "isLocal": false
-                      }
-                    ],
-                    "init": [
-                      {
-                        "type": "NumericLiteral",
-                        "value": 2,
-                        "raw": "2",
-                        "loc": {
-                          "start": {
-                            "line": 1,
-                            "column": 27
-                          },
-                          "end": {
-                            "line": 1,
-                            "column": 28
-                          }
-                        },
-                        "range": [
-                          27,
-                          28
-                        ]
-                      }
-                    ],
-                    "loc": {
-                      "start": {
-                        "line": 1,
-                        "column": 23
-                      },
-                      "end": {
-                        "line": 1,
-                        "column": 28
-                      }
-                    },
-                    "range": [
-                      23,
-                      28
-                    ]
-                  }
-                ],
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 0
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 28
-                  }
-                },
-                "range": [
-                  0,
-                  28
-                ]
-              }
-            ],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 0
-              },
-              "end": {
-                "line": 1,
-                "column": 32
-              }
-            },
-            "range": [
-              0,
-              32
-            ]
-          }
-        ],
         "loc": {
           "start": {
             "line": 1,
@@ -822,34 +644,14 @@
           },
           "end": {
             "line": 1,
-            "column": 32
+            "column": 16
           }
         },
         "range": [
           0,
-          32
+          16
         ],
-        "comments": [
-          {
-            "type": "CStyleComment",
-            "value": " branch ",
-            "raw": "/* branch */",
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 10
-              },
-              "end": {
-                "line": 1,
-                "column": 22
-              }
-            },
-            "range": [
-              10,
-              22
-            ]
-          }
-        ],
+        "comments": [],
         "globals": [
           {
             "type": "Identifier",
@@ -857,16 +659,16 @@
             "loc": {
               "start": {
                 "line": 1,
-                "column": 3
+                "column": 0
               },
               "end": {
                 "line": 1,
-                "column": 4
+                "column": 1
               }
             },
             "range": [
-              3,
-              4
+              0,
+              1
             ],
             "isLocal": false
           }
@@ -877,20 +679,230 @@
         "locations": true,
         "ranges": true,
         "scope": true,
-        "luaVersion": "FiveM5.4",
-        "cStyleComments": true
+        "luaVersion": "5.3",
+        "encodingMode": "pseudo-latin1"
       }
     },
     {
-      "source": "/* unterminated block comment",
-      "result": "[1:30] unfinished long comment (starting at line 1) near '<eof>'",
+      "source": "a = \"\\xc3\\xa9\"",
+      "result": {
+        "type": "Chunk",
+        "body": [
+          {
+            "type": "AssignmentStatement",
+            "variables": [
+              {
+                "type": "Identifier",
+                "name": "a",
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 1
+                  }
+                },
+                "range": [
+                  0,
+                  1
+                ],
+                "isLocal": false
+              }
+            ],
+            "init": [
+              {
+                "type": "StringLiteral",
+                "value": "Ã©",
+                "raw": "\"\\xc3\\xa9\"",
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 14
+                  }
+                },
+                "range": [
+                  4,
+                  14
+                ]
+              }
+            ],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 0
+              },
+              "end": {
+                "line": 1,
+                "column": 14
+              }
+            },
+            "range": [
+              0,
+              14
+            ]
+          }
+        ],
+        "loc": {
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 1,
+            "column": 14
+          }
+        },
+        "range": [
+          0,
+          14
+        ],
+        "comments": [],
+        "globals": [
+          {
+            "type": "Identifier",
+            "name": "a",
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 0
+              },
+              "end": {
+                "line": 1,
+                "column": 1
+              }
+            },
+            "range": [
+              0,
+              1
+            ],
+            "isLocal": false
+          }
+        ]
+      },
       "options": {
         "comments": true,
         "locations": true,
         "ranges": true,
         "scope": true,
-        "luaVersion": "FiveM5.4",
-        "cStyleComments": true
+        "luaVersion": "5.3",
+        "encodingMode": "pseudo-latin1"
+      }
+    },
+    {
+      "source": "a = \"\\xff\"",
+      "result": {
+        "type": "Chunk",
+        "body": [
+          {
+            "type": "AssignmentStatement",
+            "variables": [
+              {
+                "type": "Identifier",
+                "name": "a",
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 1
+                  }
+                },
+                "range": [
+                  0,
+                  1
+                ],
+                "isLocal": false
+              }
+            ],
+            "init": [
+              {
+                "type": "StringLiteral",
+                "value": "ÿ",
+                "raw": "\"\\xff\"",
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 4
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 10
+                  }
+                },
+                "range": [
+                  4,
+                  10
+                ]
+              }
+            ],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 0
+              },
+              "end": {
+                "line": 1,
+                "column": 10
+              }
+            },
+            "range": [
+              0,
+              10
+            ]
+          }
+        ],
+        "loc": {
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 1,
+            "column": 10
+          }
+        },
+        "range": [
+          0,
+          10
+        ],
+        "comments": [],
+        "globals": [
+          {
+            "type": "Identifier",
+            "name": "a",
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 0
+              },
+              "end": {
+                "line": 1,
+                "column": 1
+              }
+            },
+            "range": [
+              0,
+              1
+            ],
+            "isLocal": false
+          }
+        ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.3",
+        "encodingMode": "pseudo-latin1"
       }
     }
   ];

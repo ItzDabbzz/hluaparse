@@ -1,0 +1,7 @@
+// { "luaVersion": "FiveM5.4", "debug": true }
+a = 1
+if a then a = 2 end
+for i = 1, 3 do a = i end
+local x <const> = a
+function f(...) return ... end
+a = { 1, 2, 3 }

@@ -146,6 +146,12 @@ function scaffoldTestAssertion(snippet, options) {
 
 // Main ---------------------------------------------------
 
+// Route console.log to stderr so a `debug` fixture cannot pollute the spec
+// written to stdout below. See the note at the emit site.
+console.log = function() {
+  process.stderr.write(Array.prototype.join.call(arguments, ' ') + '\n');
+};
+
 var args = process.argv.splice(2);
 
 if (!args.length) {
@@ -189,7 +195,11 @@ args.forEach(function(arg, index) {
   return;
 });
 
-console.log(scaffoldFile());
+// Emit the generated spec on stdout via process.stdout.write rather than
+// console.log. A fixture that enables the parser's `debug` option writes its
+// own trace through console.log, which also goes to stdout and would corrupt
+// this output. Sending console.log to stderr keeps stdout pure spec.
+process.stdout.write(scaffoldFile());
 
 if (verbose && notifications.length) {
   console.warn("\nNotices: \n-----------------------------");

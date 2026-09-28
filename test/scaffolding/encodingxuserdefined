@@ -1,0 +1,8 @@
+// { "luaVersion": "5.3", "encodingMode": "x-user-defined" }
+a = "\u{41}"
+a = "\u{80}"
+a = "\u{800}"
+a = "\u{ffff}"
+a = "\u{10000}"
+a = "\u{10ffff}"
+a = "\x80"
