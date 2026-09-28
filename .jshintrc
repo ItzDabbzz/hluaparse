@@ -15,5 +15,10 @@
   "boss": true,
   "eqnull": true,
   "laxcomma": true,
-  "loopfunc": false
+  "loopfunc": false,
+  "esversion": 6,
+  "laxbreak": true,
+  "predef": [
+    "console"
+  ]
 }
