@@ -12,54 +12,97 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 15.x
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.version }}
+        uses: actions/setup-node@v4
         with:
-          node-version: 15.x
+          node-version: ${{ matrix.version }}
       - run: npm ci
       - run: make lint complexity-analysis
+    strategy:
+      fail-fast: false
+      matrix:
+        # The lint and complexity tools are only checked on the two ends of
+        # the supported range; one run is enough to catch a syntax regression.
+        version: [20.x, 24.x]
 
   run-tests-node:
     name: Test in Node.js
     needs: lint
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        version: [10.x, 12.x, 14.x, 15.x]
+        version: [20.x, 22.x, 24.x]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install Node.js ${{ matrix.version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.version }}
       - run: node test/runner.js | .github/tap_check.bash
+
+  run-tests-bun:
+    name: Test in Bun
+    needs: lint
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ['1.3.13', 'latest']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ matrix.version }}
+      - run: bun test/runner.js | .github/tap_check.bash
 
   run-tests-rhino:
     name: Test in Rhino
     needs: lint
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        version: [1.7.13]
+        # 1.7.15 is the newest release that ships a standalone shell jar on
+        # GitHub. 1.8+ moved to Maven Central, where the shell lives in the
+        # separate `rhino-tools` artifact, so it needs the classpath form.
+        include:
+          - version: '1.7.15'
+            source: github
+          - version: '1.9.1'
+            source: maven
     steps:
-      - uses: actions/checkout@v2
-      - name: Download Rhino ${{ matrix.version }}
+      - uses: actions/checkout@v4
+      - name: Download Rhino ${{ matrix.version }} from ${{ matrix.source }}
         run: |
           VERSION="${{ matrix.version }}"
-          wget "https://github.com/mozilla/rhino/releases/download/Rhino${VERSION//./_}_Release/rhino-$VERSION.jar" -O /opt/rhino.jar
+          if [ "${{ matrix.source }}" = "github" ]; then
+            wget "https://github.com/mozilla/rhino/releases/download/Rhino${VERSION//./_}_Release/rhino-$VERSION.jar" -O /opt/rhino.jar
+          else
+            wget "https://repo1.maven.org/maven2/org/mozilla/rhino/$VERSION/rhino-$VERSION.jar" -O /opt/rhino.jar
+            wget "https://repo1.maven.org/maven2/org/mozilla/rhino-tools/$VERSION/rhino-tools-$VERSION.jar" -O /opt/rhino-tools.jar
+          fi
       - name: Run tests
-        run: cd test; java -jar /opt/rhino.jar -opt -1 runner.js | ../.github/tap_check.bash
+        run: |
+          cd test
+          if [ "${{ matrix.source }}" = "maven" ]; then
+            java -cp "/opt/rhino.jar;/opt/rhino-tools.jar" \
+              org.mozilla.javascript.tools.shell.Main -opt -1 runner.js | ../.github/tap_check.bash
+          else
+            java -jar /opt/rhino.jar -opt -1 runner.js | ../.github/tap_check.bash
+          fi
 
   run-tests-ringojs:
     name: Test in RingoJS
     needs: lint
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        version: [2.0.0]
+        version: ['4.0.0']
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Download and unpack RingoJS ${{ matrix.version }}
         run: |
           VERSION="${{ matrix.version }}"
@@ -81,10 +124,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: ['2020-09-06', '2020-11-08', '2021-03-27']
+        version: ['2020-09-06', '2025-04-26', '2025-09-13', '2026-06-04']
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install QuickJS ${{ matrix.version }}
         run: |
           wget "https://bellard.org/quickjs/binary_releases/quickjs-linux-x86_64-${{ matrix.version }}.zip" -O quickjs.zip
@@ -103,9 +146,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: [2.4.0, 2.5.0, 2.6.0]
+        version: [2.4.0, 2.5.0, 2.6.0, 2.7.0]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Build and install Duktape ${{ matrix.version }}
         run: |
           PACKAGE="duktape-${{ matrix.version }}"
@@ -120,11 +163,11 @@ jobs:
 
   check-coverage:
     name: Coverage analysis
-    needs: [run-tests-node, run-tests-rhino, run-tests-ringojs, run-tests-quickjs, run-tests-duktape]
+    needs: [run-tests-node, run-tests-bun, run-tests-rhino, run-tests-ringojs, run-tests-quickjs, run-tests-duktape]
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - run: npm ci
       - run: make coverage-analysis
 
@@ -136,12 +179,12 @@ jobs:
 
     steps:
       - name: Check out GitHub Pages
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: refs/heads/gh-pages
           path: .
       - name: Check out luaparse
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: luaparse
       - name: Rebuild documentation
