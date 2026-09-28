@@ -30,6 +30,23 @@ jobs:
           node-version: '24'
           registry-url: https://registry.npmjs.org/
 
+      # Staged publishing needs npm >= 11.15.0 and Node >= 22.14.0. Node 24
+      # satisfies the Node half, but the npm that ships with it is not
+      # guaranteed to be new enough, so the floor is asserted rather than
+      # assumed.
+      - name: Verify the toolchain supports staged publishing
+        run: |
+          NPM_VERSION=$(npm --version)
+          echo "npm $NPM_VERSION"
+          node -e '
+            const [maj, min] = process.versions.npm.split(".").map(Number);
+            if (maj < 11 || (maj === 11 && min < 15)) {
+              console.error("npm " + process.versions.npm +
+                " is too old; staged publishing needs 11.15.0 or later");
+              process.exit(1);
+            }
+          '
+
       # The version in package.json must match the git tag, otherwise the
       # release publishes a number that does not correspond to the tag.
       - name: Verify version matches tag
@@ -62,6 +79,30 @@ jobs:
             || { echo "dist/luaparse.es5.js missing from the tarball"; exit 1; }
           echo "tarball contains the ES5 build"
 
-      - run: npm publish --provenance --access public
+      # The npm token is a stage-only token, so it cannot publish a version
+      # directly; npm rejects that with a 403. Staging puts the tarball in a
+      # non-public state and a maintainer promotes it with 2FA via
+      # `npm stage approve`. Everything is gated and the tarball verified
+      # before this point, so what gets staged is the tested artifact.
+      - name: Stage the version for review
+        # The ./ prefix is required: without it npm reads the bare filename
+        # as a git spec and tries to clone it over ssh.
+        run: npm stage publish ./staging/*.tgz
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Report what is waiting for approval
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          PKG=$(node -p "require('./package.json').name")
+          VER=$(node -p "require('./package.json').version")
+          npm stage list || true
+          {
+            echo
+            echo "Staged \`$PKG@$VER\`, not yet public."
+            echo "A maintainer promotes it with 2FA:"
+            echo "  npm stage list"
+            echo "  npm stage approve <stage-id>"
+            echo "Until then \`npm install $PKG\` will not resolve $VER."
+          } >> "$GITHUB_STEP_SUMMARY"
