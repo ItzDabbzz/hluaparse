@@ -30,6 +30,12 @@ interface ParseOptions {
      * The identifier will be passed as the only parameter.
      */
     onLocalDeclaration: null | ((name: string) => void);
+    /**
+     * The Lua dialect to target. Defaults to `'5.5'`, the newest supported
+     * release. `'FiveM5.4'` is opt-in: it additionally accepts safe
+     * navigation, compound assignment and non-ASCII identifiers, none of
+     * which stock Lua allows in any version.
+     */
     luaVersion: "5.1" | "5.2" | "5.3" | "5.4" | "5.5" | "FiveM5.4" | "LuaJIT";
     /**
      * Whether `continue` is a keyword. Defaults to true for Lua 5.2 and newer,

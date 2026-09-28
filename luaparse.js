@@ -77,7 +77,7 @@
 
   var input, options, length, features, encodingMode;
 
-  const CompoundOperators = [
+  var CompoundOperators = [
     "+=",
     "-=",
     "*=",
@@ -116,8 +116,12 @@
     // The variable's name will be passed as the only parameter
     onLocalDeclaration: null,
     // The version of Lua targeted by the parser (string; allowed values are
-    // '5.1', '5.2', '5.3', '5.4', 'FiveM5.4').
-    luaVersion: "FiveM5.4",
+    // '5.1', '5.2', '5.3', '5.4', '5.5', 'FiveM5.4', 'LuaJIT').
+    // The default is the newest supported release. Pass 'FiveM5.4'
+    // explicitly to opt into the FiveM dialect: safe navigation, compound
+    // assignment and non-ASCII identifiers are extensions to Lua and are
+    // only parsed under that version.
+    luaVersion: "5.5",
     // Whether `continue` is a keyword. Defaults to true for Lua 5.2 and newer,
     // and false for 5.1, where `continue` is an ordinary identifier. Set this to
     // override the default for any version.
@@ -2664,14 +2668,23 @@
         flowContext.addLocal(name.name, declToken);
       } while (consume(","));
 
+      // Built with a loop rather than spread + Array#find so this file stays
+      // loadable by the ES5-only embeddable engines in the CI matrix.
       /** @type string[] */
-      const specialOperators = [
-        ...(features.compoundOperators ? CompoundOperators : []),
-        features.inKeyword && "in",
-      ];
+      var specialOperators = [];
+      if (features.compoundOperators) {
+        specialOperators = specialOperators.concat(CompoundOperators);
+      }
+      if (features.inKeyword) specialOperators.push("in");
 
       /** @type string | undefined */
-      let specialOperator = specialOperators.find((op) => consume(op));
+      var specialOperator;
+      for (var opIndex = 0; opIndex < specialOperators.length; opIndex++) {
+        if (consume(specialOperators[opIndex])) {
+          specialOperator = specialOperators[opIndex];
+          break;
+        }
+      }
 
       if (consume("=") || specialOperator !== undefined) {
         do {
@@ -2883,9 +2896,16 @@
       return unexpected(token);
     }
 
-    const compoundOperator = features.compoundOperators
-      ? CompoundOperators.find((op) => op === token.value)
-      : undefined;
+    // Plain loop instead of Array#find, for the ES5-only engines.
+    var compoundOperator;
+    if (features.compoundOperators) {
+      for (var ci = 0; ci < CompoundOperators.length; ci++) {
+        if (CompoundOperators[ci] === token.value) {
+          compoundOperator = CompoundOperators[ci];
+          break;
+        }
+      }
+    }
 
     if (compoundOperator !== undefined) expect(token.value);
     else expect("=");
