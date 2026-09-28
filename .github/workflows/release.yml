@@ -57,16 +57,11 @@ jobs:
       #   npm install https://github.com/ItzDabbzz/hluaparse/archive/refs/tags/v1.0.0.tar.gz
       # A plain archive download also works, but it has no dist/, so the ES5
       # entry point is absent. The attached .tgz is the complete one.
+      # gh release upload has no --notes flag; the install instructions live
+      # in the Release body created when the release was published.
       - name: Attach the tarball to the release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release upload "${GITHUB_REF_NAME}" staging/*.tgz \
-            --clobber \
-            --notes "npm-ready tarball, including the ES5 build in dist/.
-
-            Install from another project:
-              npm install https://github.com/ItzDabbzz/hluaparse/archive/refs/tags/${GITHUB_REF_NAME}.tar.gz
-
-            or download the attached .tgz, which additionally contains the
-            ES5 artifact that a plain archive download does not."
+          gh release upload "${GITHUB_REF_NAME}" staging/*.tgz --clobber
+          echo "attached: $(ls staging/*.tgz)"
