@@ -67,41 +67,33 @@ jobs:
         # 1.7.15 is the newest release that ships a standalone shell jar on
         # GitHub. 1.8+ moved to Maven Central, where the shell lives in the
         # separate `rhino-tools` artifact, so it needs the classpath form.
-        include:
-          - version: '1.7.15'
-            source: github
-          - version: '1.9.1'
-            source: maven
+        # 1.7.15 is deliberately not tested. It cannot run the full harness:
+        # it stops partway through the suite (around test 2900 of 3150) and
+        # still exits 0, so it reports a partial run as a success. Stack size
+        # does not change this. 1.9.1 is the oldest Rhino that completes the
+        # whole suite, and it needs the Maven `rhino-tools` artifact because
+        # 1.8+ no longer publishes a standalone shell jar on GitHub.
+        version: ['1.9.1']
     steps:
       - uses: actions/checkout@v4
       - name: Build the ES5 artifact
         run: npm ci && node scripts/build-es5
-      - name: Download Rhino ${{ matrix.version }} from ${{ matrix.source }}
+      - name: Download Rhino ${{ matrix.version }}
         run: |
           VERSION="${{ matrix.version }}"
-          if [ "${{ matrix.source }}" = "github" ]; then
-            wget "https://github.com/mozilla/rhino/releases/download/Rhino${VERSION//./_}_Release/rhino-$VERSION.jar" -O /opt/rhino.jar
-          else
-            wget "https://repo1.maven.org/maven2/org/mozilla/rhino/$VERSION/rhino-$VERSION.jar" -O /opt/rhino.jar
-            wget "https://repo1.maven.org/maven2/org/mozilla/rhino-tools/$VERSION/rhino-tools-$VERSION.jar" -O /opt/rhino-tools.jar
-          fi
+          # ":" is the classpath separator; ";" is Windows-only.
+          wget "https://repo1.maven.org/maven2/org/mozilla/rhino/$VERSION/rhino-$VERSION.jar" -O /opt/rhino.jar
+          wget "https://repo1.maven.org/maven2/org/mozilla/rhino-tools/$VERSION/rhino-tools-$VERSION.jar" -O /opt/rhino-tools.jar
       - name: Run tests
         run: |
           cd test
           # Rhino has no `process`, so LUAPARSE_ENTRY in the environment is
           # never seen. `-e` is evaluated in the same global scope as the
           # script, so this is the only way to tell it which build to load.
-          DEFINE='var LUAPARSE_ENTRY="../dist/luaparse.es5";'
-          if [ "${{ matrix.source }}" = "maven" ]; then
-            # ":" is the classpath separator on the Linux runner; ";" is
-            # Windows-only and silently resolves to a single bogus path here.
-            java -cp "/opt/rhino.jar:/opt/rhino-tools.jar" \
-              org.mozilla.javascript.tools.shell.Main -opt -1 -e "$DEFINE" runner.js \
-              | ../.github/tap_check.bash
-          else
-            java -jar /opt/rhino.jar -opt -1 -e "$DEFINE" runner.js \
-              | ../.github/tap_check.bash
-          fi
+          java -cp "/opt/rhino.jar:/opt/rhino-tools.jar" \
+            org.mozilla.javascript.tools.shell.Main -opt -1 \
+            -e 'var LUAPARSE_ENTRY="../dist/luaparse.es5";' runner.js \
+            | ../.github/tap_check.bash
 
   run-tests-ringojs:
     name: Test in RingoJS (ES5 build)

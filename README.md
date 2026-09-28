@@ -172,13 +172,13 @@ function and line coverage**. Every run is also validated as well-formed TAP,
 and a run that produces no TAP at all is treated as a failure rather than a
 pass — an engine that crashes on load cannot report success.
 
-Tests run on 16 engine configurations:
+Tests run on 15 engine configurations:
 
 | Engine | Versions |
 | --- | --- |
 | Node.js | 20, 22, 24 |
 | Bun | 1.3.13, latest |
-| Rhino | 1.7.15, 1.9.1 |
+| Rhino | 1.9.1 |
 | RingoJS | 4.0.0 |
 | Duktape | 2.4.0, 2.5.0, 2.6.0, 2.7.0 |
 | QuickJS | 2020-09-06, 2025-04-26, 2025-09-13, 2026-06-04 |
