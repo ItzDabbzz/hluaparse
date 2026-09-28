@@ -2713,7 +2713,96 @@
     },
     {
       "source": "local Дождь = {}",
-      "result": "[1:7] unexpected symbol 'Д' near 'local'"
+      "result": {
+        "type": "Chunk",
+        "body": [
+          {
+            "type": "LocalStatement",
+            "variables": [
+              {
+                "type": "Identifier",
+                "name": "Дождь",
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 6
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 11
+                  }
+                },
+                "range": [
+                  6,
+                  11
+                ],
+                "isLocal": true
+              }
+            ],
+            "init": [
+              {
+                "type": "TableConstructorExpression",
+                "fields": [],
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 14
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 16
+                  }
+                },
+                "range": [
+                  14,
+                  16
+                ]
+              }
+            ],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 0
+              },
+              "end": {
+                "line": 1,
+                "column": 16
+              }
+            },
+            "range": [
+              0,
+              16
+            ]
+          }
+        ],
+        "loc": {
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 1,
+            "column": 16
+          }
+        },
+        "range": [
+          0,
+          16
+        ],
+        "comments": [],
+        "globals": []
+      }
+    },
+    {
+      "source": "local Дождь = {}",
+      "result": "[1:7] unexpected symbol 'Д' near 'local'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.4"
+      }
     },
     {
       "source": "local Дождь = {}",
@@ -2801,6 +2890,7 @@
         "locations": true,
         "ranges": true,
         "scope": true,
+        "luaVersion": "5.4",
         "extendedIdentifiers": true
       }
     }

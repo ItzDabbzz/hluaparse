@@ -3449,6 +3449,12 @@
     },
     "FiveM5.4": {
       continueKeyword: true,
+      // FiveM's Lua accepts code points >= U+0080 in identifiers, so that
+      // scripts written with non-English variable names parse instead of
+      // throwing. This diverges from stock Lua, which rejects them in every
+      // version from 5.1 through 5.4; see the `extendedIdentifiers` option for
+      // the opt-out and for enabling it elsewhere.
+      extendedIdentifiers: true,
       labels: true,
       emptyStatement: true,
       hexEscapes: true,

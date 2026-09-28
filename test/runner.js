@@ -72,6 +72,7 @@
       , './spec/encodingxuserdefined'
       , './spec/escapesequences'
       , './spec/expressions'
+      , './spec/extendedidentifiers'
       , './spec/fivmextensions'
       , './spec/for'
       , './spec/functioncalls'

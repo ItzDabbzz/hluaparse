@@ -1,0 +1,13 @@
+// { "luaVersion": "FiveM5.4" }
+local 名前 = "player"
+local имя = 1
+local nombre = "José"
+local prenom = "René"
+local имя_игрока = GetPlayerName(1)
+玩家 = {}
+local ключ = 1
+function 計算(a, b) return a + b end
+local ชื่อ = "ไทย"
+local ünïcödé_名前 = 1
+for 索引 = 1, 10 do print(索引) end
+if 条件 then return 値 end

@@ -63,10 +63,14 @@ The available options are:
 - `onLocalDeclaration: null` A callback which will be invoked when a local
   variable is declared. The identifier will be passed as the only parameter.
 - `luaVersion: '5.1'` The version of Lua the parser will target; supported
-  values are `'5.1'`, `'5.2'`, `'5.3'`, `'FiveM5.4'` and `'LuaJIT'`.
+  values are `'5.1'`, `'5.2'`, `'5.3'`, `'5.4'`, `'5.5'`, `'FiveM5.4'` and
+  `'LuaJIT'`.
 - `extendedIdentifiers: false` Whether to allow code points ≥ U+0080 in
-  identifiers, like LuaJIT does. **Note:** setting `luaVersion: 'LuaJIT'`
-  currently does *not* enable this option; this may change in the future.
+  identifiers, like LuaJIT does. Defaults to `true` for `'FiveM5.4'`, whose
+  runtime accepts non-English variable names, and `false` everywhere else,
+  matching stock Lua, which rejects them in every version. **Note:** setting
+  `luaVersion: 'LuaJIT'` currently does *not* enable this option; this may
+  change in the future.
 - `encodingMode: 'none'` Defines the relation between code points ≥ U+0080
   appearing in parser input and raw bytes in source code, and how Lua escape
   sequences in JavaScript strings should be interpreted. See the
