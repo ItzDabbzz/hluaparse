@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/readme/hero.svg" width="100%" alt="hluaparse — a Lua parser for JavaScript supporting Lua 5.1 to 5.5 plus the FiveM dialect, with 3156 assertions and 100% coverage">
+  <img src="./assets/readme/hero.svg" width="100%" alt="hluaparse — a Lua parser for JavaScript supporting Lua 5.1 to 5.5 plus the FiveM dialect, with 3197 assertions and 100% coverage">
 </p>
 
 A Lua parser written in JavaScript. Parses **Lua 5.1 through 5.5**, plus
@@ -167,7 +167,7 @@ output, `-q/--quiet` to suppress it.
 
 ## Correctness
 
-The suite is **3,156 assertions** and CI enforces **100% statement, branch,
+The suite is **3,197 assertions** and CI enforces **100% statement, branch,
 function and line coverage**. Every run is also validated as well-formed TAP,
 and a run that produces no TAP at all is treated as a failure rather than a
 pass — an engine that crashes on load cannot report success.

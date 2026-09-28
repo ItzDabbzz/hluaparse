@@ -1,116 +1,264 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Luaparse</title>
-  <link rel="stylesheet" href="//yui.yahooapis.com/combo?2.9.0/build/treeview/assets/skins/sam/treeview.css">
-  <style>
-    body {
-      font-family: arial;
-      max-width: 1000px;
-      margin: 1em auto;
-    }
-    #editor {
-      width: 50%;
-      height: 500px;
-      position: relative;
-    }
-    #tree {
-      padding-left: 2%;
-      font-size: 11px;
-    }
-    #editor, #tree {
-      float: left;
-    }
-    .ygtvlabel {
-      white-space: nowrap;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div id="editor">function Foo:bar (...)
-  local baz = "Hazzaah"
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AST tree - hluaparse</title>
+    <meta name="description" content="Live Lua to abstract syntax tree viewer built on hluaparse.">
+    <style>
+      :root {
+        --bg: #0B0E14; --bg-alt: #10151E; --panel: #141A24; --panel-alt: #1E2635;
+        --border: #2A3444; --rule: #1A2130; --text: #E6EAF2; --headline: #F0F4FA;
+        --muted: #7C8697; --muted-mid: #9AA5B4; --accent: #5EE6A8; --warn: #F0A868;
+        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      *, *::before, *::after { box-sizing: border-box; }
+      body {
+        margin: 0; background: var(--bg); color: var(--text);
+        font-family: var(--sans); font-size: 15px; line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .wrap { max-width: 62rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; }
+      .back { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
+      .back:hover { color: var(--accent); }
+      h1 { font-size: 1.5rem; color: var(--headline); letter-spacing: -0.02em; margin: 1rem 0 0.3rem; }
+      .lede { color: var(--muted); margin: 0 0 1.5rem; max-width: 42rem; }
+      h1 span { color: var(--accent); }
+      .panes { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
+      @media (max-width: 48rem) { .panes { grid-template-columns: 1fr; } }
+      .pane {
+        background: var(--panel); border: 1px solid var(--border);
+        border-radius: 10px; overflow: hidden;
+      }
+      .pane > h2 {
+        font-size: 0.72rem; letter-spacing: 0.09em; text-transform: uppercase;
+        color: var(--muted); margin: 0; padding: 0.55rem 0.8rem;
+        border-bottom: 1px solid var(--border); background: var(--panel-alt);
+        font-weight: 600;
+      }
+      textarea {
+        display: block; width: 100%; height: 26rem; resize: vertical;
+        background: var(--bg); color: var(--text); border: 0; outline: 0;
+        font-family: var(--mono); font-size: 0.85rem; line-height: 1.55;
+        padding: 0.8rem; tab-size: 2;
+      }
+      .toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0 0 1rem; }
+      .toolbar label { font-size: 0.78rem; color: var(--muted); font-family: var(--mono); }
+      input[type="checkbox"] {
+        appearance: none;
+        width: 1rem; height: 1rem;
+        margin: 0 0.15rem 0 0;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        background: var(--panel-alt);
+        cursor: pointer;
+        vertical-align: -2px;
+      }
+      input[type="checkbox"]:checked {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+      input[type="checkbox"]:checked::after {
+        content: "\2713";
+        display: block;
+        color: var(--bg);
+        font-size: 0.72rem;
+        line-height: 1;
+        text-align: center;
+      }
+      select, button {
+        font-family: var(--mono); font-size: 0.8rem; color: var(--text);
+        background: var(--panel-alt); border: 1px solid var(--border);
+        border-radius: 6px; padding: 0.3rem 0.55rem; cursor: pointer;
+      }
+      button:hover, select:hover { border-color: var(--accent); color: var(--accent); }
+      .status { font-family: var(--mono); font-size: 0.8rem; margin-left: auto; }
+      .status.ok { color: var(--accent); }
+      .status.err { color: var(--warn); }
+      #tree { padding: 0.6rem 0.8rem; height: 26rem; overflow: auto; font-family: var(--mono); font-size: 0.8rem; }
+      details { margin: 0; }
+      summary { cursor: pointer; color: var(--muted-mid); padding: 0.1rem 0; list-style: none; }
+      summary::-webkit-details-marker { display: none; }
+      summary::before { content: "\25B8"; color: var(--muted); display: inline-block; width: 1rem; }
+      details[open] > summary::before { content: "\25BE"; }
+      summary:hover { color: var(--accent); }
+      .kids { padding-left: 1rem; border-left: 1px solid var(--rule); margin-left: 0.45rem; }
+      .k { color: var(--accent); }
+      .v { color: var(--warn); }
+      .n { color: var(--muted); }
+      .err-box { padding: 0.8rem; color: var(--warn); font-family: var(--mono); font-size: 0.8rem; }
+      table { border-collapse: collapse; width: 100%; margin: 0 0 1.5rem; font-size: 0.88rem; }
+      th, td { border: 1px solid var(--rule); padding: 0.4rem 0.65rem; text-align: left; }
+      th { background: var(--panel); color: var(--headline); font-weight: 600; }
+      tbody tr:nth-child(even) { background: rgba(20, 26, 36, 0.55); }
+      td.num { text-align: right; font-family: var(--mono); color: var(--muted-mid); }
+      tfoot td { color: var(--headline); font-weight: 600; font-family: var(--mono); }
+      .bar { display: inline-block; height: 6px; border-radius: 3px; background: var(--accent);
+             vertical-align: middle; margin-right: 0.5rem; }
+      .note { color: var(--muted); font-size: 0.85rem; }
+      code { font-family: var(--mono); font-size: 0.86em; background: var(--panel-alt);
+             border: 1px solid var(--rule); border-radius: 4px; padding: 0.1em 0.35em; }
+      pre { background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+            padding: 0.9rem 1rem; overflow-x: auto; }
+      pre code { background: none; border: 0; padding: 0; font-size: 0.84rem; }
+      .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+      @media (max-width: 48rem) { .cols2 { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <a class="back" href="../examples.html">&larr; Examples</a>
+      <h1>AST <span>tree</span></h1>
+      <p class="lede">Type or paste Lua on the left; the parser runs on every keystroke and the resulting abstract syntax tree is rendered on the right. Choose a dialect with the selector to see what changes.</p>
+
+      <div class="toolbar">
+        <label for="version">luaVersion</label>
+        <select id="version">
+          <option>5.5</option>
+          <option>5.4</option>
+          <option>5.3</option>
+          <option>5.2</option>
+          <option>5.1</option>
+          <option>FiveM5.4</option>
+          <option>LuaJIT</option>
+        </select>
+        <label for="locations">locations</label>
+        <input type="checkbox" id="locations">
+        <label for="ranges">ranges</label>
+        <input type="checkbox" id="ranges">
+        <span class="status" id="status">ready</span>
+      </div>
+
+      <div class="panes">
+        <div class="pane">
+          <h2>Lua source</h2>
+          <textarea id="source" spellcheck="false" aria-label="Lua source">
+-- Type to parse. The tree updates as you type.
+local M = {}
+
+function M.greet(name, punctuation)
+  return "Hello, " .. name .. (punctuation or "!")
 end
-</div>
-  <div>
-    <button id="expand">Expand</button>
-    <button id="collapse">Collapse</button>
-  </div>
-  <div id="tree"></div>
-</div>
 
-<script src="../luaparse.js"></script>
-<script src="//yui.yahooapis.com/combo?2.9.0/build/yahoo-dom-event/yahoo-dom-event.js&2.9.0/build/treeview/treeview-min.js"></script>
-<script src="//d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js"></script>
-<script>
-  (function(window, document, ace, YAHOO, luaparse) {
-    var editor = ace.edit('editor');
-    editor.setTheme('ace/theme/solarized_light');
-    editor.getSession().setMode('ace/mode/javascript');
-    editor.getSession().on('change', parse);
+for i = 1, 3 do
+  print(M.greet("world" .. i))
+end
+          </textarea>
+        </div>
+        <div class="pane">
+          <h2>Abstract syntax tree</h2>
+          <div id="tree"></div>
+        </div>
+      </div>
+    </div>
 
-    var hasOwn = Object.prototype.hasOwnProperty;
-    var isArray = Array.isArray || function (arr) {
-      return Object.prototype.toString.call(arr) === '[object Array]';
-    };
+    <script src="../luaparse.js"></script>
+    <script>
+      (function (window, document, hluaparse) {
+        "use strict";
 
-    function convertAstToTree(name, node) {
-      switch (typeof node) {
-        case 'number':
-        case 'string':
-        case 'boolean': return { type: 'Text', label: name + ': ' + node };
-        case 'object':
-          if (!node) return { type: 'Text', label: name +': null' };
-          var obj = { type: 'Text', label: '' + name, expanded: true, children: [] };
-          if (isArray(node)) {
-            obj.label += ' [' + node.length + ']';
-            for (var i = 0, l = node.length; i < l; i++) {
-              var child = node[i];
-              name = child.type ? '#' + i + ' ' + child.type : i;
-              obj.children.push(convertAstToTree(name, child));
-            }
-          } else {
-            for (var key in node) if (hasOwn.call(node, key)) {
-              obj.children.push(convertAstToTree(key, node[key]));
+        var source = document.getElementById("source"),
+            tree = document.getElementById("tree"),
+            status = document.getElementById("status"),
+            version = document.getElementById("version"),
+            locations = document.getElementById("locations"),
+            ranges = document.getElementById("ranges"),
+            timer = null;
+
+        function el(name, className, text) {
+          var node = document.createElement(name);
+          if (className) node.className = className;
+          if (text != null) node.textContent = text;
+          return node;
+        }
+
+        // A value that is neither a node nor a plain container of nodes
+        // (a string, a number, the `isLocal` flag) renders inline on the
+        // parent's row rather than getting a row of its own.
+        function renderValue(key, value) {
+          if (value === null || typeof value !== "object") {
+            return el("div", null, " ").appendChild(el("span", "k", key))
+              .appendChild(el("span", "v", ": " + JSON.stringify(value)));
+          }
+          return renderNode(key, value);
+        }
+
+        function renderNode(label, node) {
+          var details = el("details"),
+              summary = el("summary"),
+              kids = el("div", "kids");
+
+          details.open = node.type !== "Chunk" ? false : true;
+          summary.appendChild(el("span", "n", label + " "));
+          summary.appendChild(el("span", "k", node.type));
+          details.appendChild(summary);
+
+          var keys = [];
+          for (var key in node) {
+            if (Object.prototype.hasOwnProperty.call(node, key) && key !== "type") {
+              keys.push(key);
             }
           }
-          return obj;
-      }
-    }
+          keys.sort();
 
-    var tree;
-    function updateTree(ast) {
-      if (typeof ast !== 'object') ast = {};
-      if (tree) {
-        tree.destroy();
-        tree = undefined;
-      }
-
-      tree = new YAHOO.widget.TreeView('tree');
-      tree.buildTreeFromObject(convertAstToTree("Chunk", ast));
-      tree.draw();
-
-      document.getElementById('collapse').onclick = function() { tree.collapseAll(); };
-      document.getElementById('expand').onclick = function() { tree.expandAll(); };
-    }
-
-    function parse() {
-      if (id) window.clearTimeout(id);
-      var id = window.setTimeout(function() {
-        var ast = {};
-        try {
-          var code = editor.getValue();
-          ast = luaparse.parse(code);
-          updateTree(ast);
-        } catch(e) {
-          updateTree({ 'error' : e.name, 'message': e.message });
+          keys.forEach(function (key) {
+            kids.appendChild(renderValue(key, node[key]));
+          });
+          if (!keys.length) {
+            kids.appendChild(el("div", "n", "  (no fields)"));
+          }
+          details.appendChild(kids);
+          return details;
         }
-        id = undefined;
-      }, 500);
-    }
-    window.onload = parse;
-  }(this, this.document, this.ace, this.YAHOO, this.luaparse));
-</script>
-</body>
+
+        function renderError(err) {
+          var box = el("div", "err-box");
+          box.appendChild(el("div", null, err.name + ": " + err.message));
+          if (err.line !== undefined) {
+            box.appendChild(el("div", null, "line " + err.line + ", column " + err.column));
+          }
+          tree.innerHTML = "";
+          tree.appendChild(box);
+        }
+
+        function parse() {
+          var ast;
+          try {
+            ast = hluaparse.parse(source.value, {
+              luaVersion: version.value,
+              locations: locations.checked,
+              ranges: ranges.checked
+            });
+          } catch (err) {
+            status.className = "status err";
+            status.textContent = "syntax error";
+            renderError(err);
+            return;
+          }
+          status.className = "status ok";
+          status.textContent = "parsed";
+          tree.innerHTML = "";
+          tree.appendChild(renderNode("", ast));
+        }
+
+        // Debounced so a burst of keystrokes parses once, not once per key.
+        function schedule() {
+          if (timer) window.clearTimeout(timer);
+          timer = window.setTimeout(function () {
+            timer = null;
+            parse();
+          }, 200);
+        }
+
+        source.addEventListener("input", schedule);
+        version.addEventListener("change", parse);
+        locations.addEventListener("change", parse);
+        ranges.addEventListener("change", parse);
+        parse();
+      }(this, this.document, this.hluaparse || this["fivem-luaparse"]));
+    </script>
+  </body>
 </html>
