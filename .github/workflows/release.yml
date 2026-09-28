@@ -4,37 +4,21 @@ on:
   release:
     types: [published]
 
-# Least privilege: the default token can read the repo, but publishing with
-# provenance attestation additionally needs an id-token.
+# Least privilege: the default token can read the repo. Attaching the
+# built tarball to the Release needs write access to contents.
 permissions:
-  contents: read
-  id-token: write
+  contents: write
 
 jobs:
-  verify:
-    name: Verify
+  build:
+    name: Build and attach artifacts
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20.x
-      - run: npm ci
-      # Mirrors the CI Lint job so a release can never ship past a red gate.
-      - run: make lint complexity-analysis
-      - run: node test/runner.js | .github/tap_check.bash
+          node-version: '24'
 
-  publish-npm:
-    name: Publish to npm
-    needs: verify
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          registry-url: https://registry.npmjs.org/
-      - run: npm ci
       # The version in package.json must match the git tag, otherwise the
       # release publishes a number that does not correspond to the tag.
       - name: Verify version matches tag
@@ -42,9 +26,47 @@ jobs:
           PKG_VERSION=$(node -p "require('./package.json').version")
           TAG_VERSION="${GITHUB_REF_NAME#v}"
           if [ "$PKG_VERSION" != "$TAG_VERSION" ]; then
-            echo "package.json is $PKG_VERSION but the tag is $TAG_VERSION"
+            echo "package.json is $PKG_VERSION but the release tag is $TAG_VERSION"
             exit 1
           fi
-      - run: npm publish --provenance --access public
+          echo "building $PKG_VERSION"
+
+      - run: npm ci
+      # Mirrors the CI gates so a release can never ship past a red one.
+      - run: make lint complexity-analysis
+      - run: node test/runner.js | .github/tap_check.bash
+
+      # dist/ is gitignored, so a clean checkout has no ES5 build. It is
+      # listed in package.json "files", so it has to be generated here or the
+      # packed tarball advertises a path that is not in it.
+      - name: Build the ES5 artifact
+        run: node scripts/build-es5
+
+      - name: Pack and verify
+        run: |
+          # npm pack does not create --pack-destination for you.
+          mkdir -p staging
+          npm pack --pack-destination staging
+          ls -la staging
+          tar -tzf staging/*.tgz | grep -q 'dist/luaparse.es5.js' \
+            || { echo "dist/luaparse.es5.js missing from the tarball"; exit 1; }
+          echo "tarball contains the ES5 build"
+
+      # Attaching a tarball is what makes the release usable from another
+      # project without publishing to a registry:
+      #   npm install https://github.com/ItzDabbzz/hluaparse/archive/refs/tags/v1.0.0.tar.gz
+      # A plain archive download also works, but it has no dist/, so the ES5
+      # entry point is absent. The attached .tgz is the complete one.
+      - name: Attach the tarball to the release
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${GITHUB_REF_NAME}" staging/*.tgz \
+            --clobber \
+            --notes "npm-ready tarball, including the ES5 build in dist/.
+
+            Install from another project:
+              npm install https://github.com/ItzDabbzz/hluaparse/archive/refs/tags/${GITHUB_REF_NAME}.tar.gz
+
+            or download the attached .tgz, which additionally contains the
+            ES5 artifact that a plain archive download does not."

@@ -64,9 +64,13 @@ scaffold-test:
 
 docs: coverage docs-test docs-md
 
+# The version badge is read from package.json rather than written out by hand:
+# a literal here drifted once already and shipped a number no release had.
+VERSION := $(shell node -p "require('./package.json').version")
+
 docs-index:
 	$(BIN)/marked README.md --gfm \
-		| cat docs/layout/head.html - docs/layout/foot.html \
+		| sed 's|<!--VERSION-->|v$(VERSION)|' docs/layout/head.html - docs/layout/foot.html \
 		> docs/index.html
 
 docs-md: docs-index $(patsubst %.md,%.html, $(wildcard docs/*.md))
@@ -74,7 +78,7 @@ docs-md: docs-index $(patsubst %.md,%.html, $(wildcard docs/*.md))
 %.html: %.md
 	echo $<
 	$(BIN)/marked $< --gfm \
-		| cat docs/layout/head.html - docs/layout/foot.html \
+		| sed 's|<!--VERSION-->|v$(VERSION)|' docs/layout/head.html - docs/layout/foot.html \
 		> $@
 
 .PHONY: docs docs-test docs-index
