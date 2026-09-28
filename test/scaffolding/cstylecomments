@@ -1,0 +1,9 @@
+// { "luaVersion": "FiveM5.4", "cStyleComments": true }
+/* a block comment */
+a = 1 /* inline */ + 2
+a = 1 /* inline */ + /* another */ 2
+--[[ long bracket ]]
+a = 1 --[[ inline ]] + 2
+/** doc style */
+if a then /* branch */ a = 2 end
+/* unterminated block comment   -- FAIL

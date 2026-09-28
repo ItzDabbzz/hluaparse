@@ -65,6 +65,7 @@
       , './spec/comments'
       , './spec/conditional'
       , './spec/continue'
+      , './spec/cstylecomments'
       , './spec/do'
       , './spec/escapesequences'
       , './spec/expressions'
@@ -296,6 +297,11 @@
           break;
         case 'GlobalWildcardStatement':
           visitKey('attribute');
+          break;
+        case 'CStyleComment':
+        case 'LongComment':
+          // Comments carry no child nodes; only their own location matters,
+          // and the caller already stripped or compared that.
           break;
         default:
           throw new Error('Unhandled ' + node.type);
