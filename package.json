@@ -1,6 +1,6 @@
 {
   "name": "hluaparse",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "A Lua parser in JavaScript - maintained by ItzDabbzz for Homestead Systems. Originally by Oskar Sch\u00f6ldstr\u00f6m, with FiveM Lua support.",
   "keywords": [
     "ast",
