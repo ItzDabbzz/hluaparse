@@ -90,9 +90,13 @@ jobs:
           # Rhino has no `process`, so LUAPARSE_ENTRY in the environment is
           # never seen. `-e` is evaluated in the same global scope as the
           # script, so this is the only way to tell it which build to load.
+          # 2>&1 is required: the Rhino shell writes every line, including
+          # the TAP results and its summary, to stderr. Without it the pipe
+          # receives nothing and the gate reports that no tests ran, even
+          # though the log is full of passing output.
           java -cp "/opt/rhino.jar:/opt/rhino-tools.jar" \
             org.mozilla.javascript.tools.shell.Main -opt -1 \
-            -e 'var LUAPARSE_ENTRY="../dist/luaparse.es5";' runner.js \
+            -e 'var LUAPARSE_ENTRY="../dist/luaparse.es5";' runner.js 2>&1 \
             | ../.github/tap_check.bash
 
   run-tests-ringojs:
