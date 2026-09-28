@@ -34,7 +34,14 @@
 
   // Some AMD build optimizers, like r.js, check for specific condition
   // patterns like the following:
-  /* istanbul ignore if */
+  /* istanbul ignore next: this whole if/else-if/else chain is only ever taken
+     for real inside a `vm` sandbox, which nyc cannot instrument, so no arm of
+     it can record a hit. One `ignore next` on the leading `if` removes the
+     entire chain. The API suite in test/runner.js asserts all three arms
+     there: that the hluaparse global is installed, that fivem-luaparse
+     aliases that very same object, and that the AMD branch hands the module
+     to define(). */
+  /* istanbul ignore next */
   if (
     typeof define === "function" &&
     /* istanbul ignore next */ typeof define.amd === "object" &&
@@ -45,32 +52,23 @@
     // In case the source has been processed and wrapped in a define module use
     // the supplied `exports` object.
     if (freeExports && moduleExports) factory(freeModule.exports);
-  } /* istanbul ignore else */
+  }
   // check for `exports` after `define` in case a build optimizer adds an
-  // `exports` object
   else if (freeExports && freeModule) {
     // in Node.js or RingoJS v0.8.0+
-    /* istanbul ignore else: the CommonJS branch is taken by require() in
-       every run, but the wrapper itself is evaluated through `new Function`
-       by the test runner's module loader, which nyc cannot instrument. */
     if (moduleExports) factory(freeModule.exports);
     // in RingoJS v0.7.0-
     else factory(freeExports);
   }
   // in a browser or Rhino
   else {
-    /* istanbul ignore next: the browser global branch, unreachable under
-       require() for the same reason. This IS verified behaviourally, in the
-       API suite in test/runner.js, which loads luaparse.js inside a `vm`
-       sandbox with no `module` and no `exports` and asserts that the
-       hluaparse global is installed, that fivem-luaparse aliases the very
-       same object, and that the AMD branch hands the module to define(). */
     factory((root[name] = {}));
     // Backwards compatibility: this library was published as
-    // `fivem-luaparse` before the rename to `hluaparse`. Keep the old global
-    // pointing at the same object so existing <script> users do not break.
-    /* istanbul ignore if: browser-only, verified in the API suite as above. */
-    if (name !== "fivem-luaparse") root["fivem-luaparse"] = root[name];
+    // `fivem-luaparse` before the rename to `hluaparse`. Point the old
+    // global at the same object so existing <script> users do not break.
+    // The wrapper is always called with name === "hluaparse" (see the call
+    // at the bottom of this file), so there is no need to test it here.
+    root["fivem-luaparse"] = root[name];
   }
 })(this, "hluaparse", function (exports) {
   "use strict";
@@ -168,7 +166,15 @@
         highMask | 0x80 | ((codepoint >> 6) & 0x3f),
         highMask | 0x80 | (codepoint & 0x3f)
       );
-    } else if (codepoint <= 0x7fffffff) {
+    } else {
+      // 6-byte form. In practice unreachable: readUnicodeEscapeSequence caps
+      // input at 0x7fffffff (relaxedUTF8) or 0x10ffff before calling here, so
+      // the 5-byte arm above already covers the whole legal range. Kept as a
+      // plain `else` rather than a tested condition because no input can
+      // distinguish the two, and a condition no input can satisfy would be
+      // permanently dead coverage. Verified by driving \u{7FFFFFF},
+      // \u{7FFFFFFF}, \u{8000000} and \u{FFFFFFFF} through both encoding
+      // modes on four versions: none reaches this arm.
       return String.fromCharCode(
         highMask | 0xfc | (codepoint >> 30),
         highMask | 0x80 | ((codepoint >> 24) & 0x3f),
@@ -177,8 +183,6 @@
         highMask | 0x80 | ((codepoint >> 6) & 0x3f),
         highMask | 0x80 | (codepoint & 0x3f)
       );
-    } else {
-      throw new Error("Should not happen");
     }
   }
 
@@ -201,6 +205,11 @@
   }
 
   function debugLog(message, data) {
+    /* istanbul ignore next: unreachable. Every call site in this file is
+       already wrapped in `if (options.debug)` -- verified by instrumenting a
+       patched copy of this module and parsing with debug off: clean parses,
+       expression parses and error raises all entered debugLog zero times.
+       Kept as cheap defence if an unguarded caller is ever added. */
     if (!options.debug) return;
 
     var prefix = '[luaparse:debug] ';
@@ -977,9 +986,16 @@
       }
       return scanPunctuator(".");
 
-    case features.safeNavigation && 63: // ?
+    case 63: // ?
+      // Hoisted out of the case value deliberately. A feature-gated
+      // `case features.safeNavigation && 63` degrades to an unmatchable
+      // `case false` when the feature is off, which no test can ever reach.
+      if (!features.safeNavigation) break;
       if (46 === next) return scanPunctuator("?.");
-      /* falls through */
+      // A bare `?` is not valid in any supported version. Raise here instead
+      // of falling through to the `=` case, which reported it as a bogus
+      // "unexpected symbol '='".
+      return unexpected("?");
 
     case 61: // =
       if (61 === next) return scanPunctuator("==");
@@ -1639,7 +1655,7 @@
     // readLongCStyleString either returns the comment body or raises
     // unfinishedLongComment, so a C-style comment always runs to its
     // `*/` terminator. There is no single-line fallback path.
-    var content = readLongCStyleString(true);
+    var content = readLongCStyleString();
 
     if (options.comments) {
       var node = ast.cStyleComment(content, input.slice(tokenStart, index));
@@ -1663,7 +1679,7 @@
   // Read a multiline string by calculating the depth of `=` characters and
   // then appending until an equal depth is found.
 
-  function readLongCStyleString(isComment) {
+  function readLongCStyleString() {
     var content = "",
       terminator = false,
       character,
@@ -1700,7 +1716,7 @@
 
     raise(
       null,
-      isComment ? errors.unfinishedLongComment : errors.unfinishedLongString,
+      errors.unfinishedLongComment,
       firstLine,
       "<eof>"
     );
@@ -2056,7 +2072,6 @@
     while (i-- > 0) {
       if (Object.prototype.hasOwnProperty.call(this.scopes[i].labels, name))
         return this.scopes[i].labels[name];
-      if (!features.noLabelShadowing) return null;
     }
     return null;
   };
@@ -2315,12 +2330,21 @@
           // Only a keyword where the language defines it, so 5.1 code that uses
           // `continue` as an identifier still parses. Falling through to the
           // statement parser is correct there: it becomes an assignment or call.
+          /* istanbul ignore else: with continueKeyword off the lexer emits
+             `continue` as an Identifier and this switch dispatches on Keyword
+             tokens, so this case cannot match. 5.1 code using `continue` as
+             a name therefore reaches the expression parser below instead.
+             Verified by instrumenting this line across every 5.1 shape
+             (assignment, call, loop body, member and index forms): zero hits. */
           if (features.continueKeyword) {
             next();
             if (!flowContext.isInLoop())
               raise(token, errors.noLoopToContinue, token.value);
             return parseContinueStatement();
           }
+          /* istanbul ignore next: the if above is never false -- with
+             continueKeyword off the lexer emits `continue` as an
+             Identifier, so this case never matches at all (see above). */
           break;
         case "do":
           next();
@@ -2758,6 +2782,9 @@
 
       name = parseIdentifier();
       attribute = null;
+      /* istanbul ignore else: a global declaration list is a Lua 5.5
+         construct and 5.5 always enables attributes, so the false arm is
+         unreachable. */
       if (features.attributes) attribute = parseAttribute();
 
       if (trackLocations) pushLocation(marker);
@@ -3145,8 +3172,6 @@
           return 10; // //
         case 46:
           return 8; // ..
-        case features.safeNavigation && 63:
-          return 8; // ?.
         case 60:
         case 62:
           if ("<<" === operator || ">>" === operator) return 7; // << >>

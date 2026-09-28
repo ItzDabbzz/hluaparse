@@ -1,0 +1,7 @@
+// { "luaVersion": "5.5" }
+global x = 1
+global x, y
+global *
+global <const> z
+global z <const>
+global function f() end
