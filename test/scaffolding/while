@@ -1,3 +1,4 @@
+// { "luaVersion": "5.1" }
 while                                   -- FAIL
 while do                                -- FAIL
 while =                                 -- FAIL

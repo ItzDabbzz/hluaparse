@@ -19,7 +19,14 @@
   exports.spec = [
     {
       "source": "a",
-      "result": "[1:1] '=' expected near '<eof>'"
+      "result": "[1:1] '=' expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = 1",
@@ -122,6 +129,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -225,6 +239,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -328,6 +349,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -431,11 +459,25 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a = 1e",
-      "result": "[1:7] malformed number near '1e'"
+      "result": "[1:7] malformed number near '1e'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = 1e1",
@@ -538,6 +580,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -641,6 +690,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -744,6 +800,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -847,11 +910,25 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a = 0x",
-      "result": "[1:7] malformed number near '0x'"
+      "result": "[1:7] malformed number near '0x'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = 0xf",
@@ -954,6 +1031,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1057,6 +1141,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1160,11 +1251,25 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a = 0xfp",
-      "result": "[1:9] malformed number near '0xfp'"
+      "result": "[1:9] malformed number near '0xfp'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = 0xfp1",
@@ -1267,6 +1372,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1370,6 +1482,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1473,6 +1592,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1576,6 +1702,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1771,6 +1904,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1911,35 +2051,91 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a = \"",
-      "result": "[1:7] unfinished string near '\"'"
+      "result": "[1:7] unfinished string near '\"'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = \"'",
-      "result": "[1:8] unfinished string near '\"''"
+      "result": "[1:8] unfinished string near '\"''",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = '\"",
-      "result": "[1:8] unfinished string near ''\"'"
+      "result": "[1:8] unfinished string near ''\"'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = \"\n\"",
-      "result": "[1:7] unfinished string near '\"'"
+      "result": "[1:7] unfinished string near '\"'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = '",
-      "result": "[1:7] unfinished string near '''"
+      "result": "[1:7] unfinished string near '''",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = '\n'",
-      "result": "[1:7] unfinished string near '''"
+      "result": "[1:7] unfinished string near '''",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = [[",
-      "result": "[1:7] unfinished long string (starting at line 1) near '<eof>'"
+      "result": "[1:7] unfinished long string (starting at line 1) near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = [[\n]]",
@@ -2042,11 +2238,25 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a = \"bar",
-      "result": "[1:10] unfinished string near '\"bar'"
+      "result": "[1:10] unfinished string near '\"bar'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = 'bar'",
@@ -2149,6 +2359,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2252,11 +2469,25 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a = [=aa",
-      "result": "[1:2] '[' expected near '='"
+      "result": "[1:2] '[' expected near '='",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = nil",
@@ -2359,6 +2590,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2462,6 +2700,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2565,6 +2810,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2668,6 +2920,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2771,6 +3030,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -3018,6 +3284,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -3121,6 +3394,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -3224,6 +3504,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -3327,6 +3614,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -3430,6 +3724,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -3533,6 +3834,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -3636,19 +3944,47 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a = [=[]",
-      "result": "[1:9] unfinished long string (starting at line 1) near '<eof>'"
+      "result": "[1:9] unfinished long string (starting at line 1) near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = [=[x]",
-      "result": "[1:10] unfinished long string (starting at line 1) near '<eof>'"
+      "result": "[1:10] unfinished long string (starting at line 1) near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = [=[x]x",
-      "result": "[1:11] unfinished long string (starting at line 1) near '<eof>'"
+      "result": "[1:11] unfinished long string (starting at line 1) near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = \"\\u\"",

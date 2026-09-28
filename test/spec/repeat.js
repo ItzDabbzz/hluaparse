@@ -19,11 +19,25 @@
   exports.spec = [
     {
       "source": "repeat",
-      "result": "[1:6] 'until' expected near '<eof>'"
+      "result": "[1:6] 'until' expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "repeat until",
-      "result": "[1:12] <expression> expected near '<eof>'"
+      "result": "[1:12] <expression> expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "repeat until 0",
@@ -84,6 +98,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -145,23 +166,58 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "repeat until local",
-      "result": "[1:13] <expression> expected near 'local'"
+      "result": "[1:13] <expression> expected near 'local'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "repeat end",
-      "result": "[1:7] 'until' expected near 'end'"
+      "result": "[1:7] 'until' expected near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "repeat 1",
-      "result": "[1:7] unexpected number '1' near '<eof>'"
+      "result": "[1:7] unexpected number '1' near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "repeat =",
-      "result": "[1:7] unexpected symbol '=' near '<eof>'"
+      "result": "[1:7] unexpected symbol '=' near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "repeat local a until 1",
@@ -262,6 +318,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -402,6 +465,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -542,19 +612,47 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "repeat ; until 1",
-      "result": "[1:7] unexpected symbol ';' near 'until'"
+      "result": "[1:7] unexpected symbol ';' near 'until'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "repeat 2 until 1",
-      "result": "[1:7] unexpected number '2' near 'until'"
+      "result": "[1:7] unexpected number '2' near 'until'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "repeat \"foo\" until 1",
-      "result": "[1:7] unexpected string '\"foo\"' near 'until'"
+      "result": "[1:7] unexpected string '\"foo\"' near 'until'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "repeat return until 0",
@@ -634,11 +732,25 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "repeat return return until 0",
-      "result": "[1:14] 'until' expected near 'return'"
+      "result": "[1:14] 'until' expected near 'return'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "repeat break until 0",
@@ -717,11 +829,25 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "repeat break break until 0",
-      "result": "[1:13] 'until' expected near 'break'"
+      "result": "[1:13] 'until' expected near 'break'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "repeat do end until 0",
@@ -801,6 +927,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -900,6 +1033,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -998,6 +1138,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {

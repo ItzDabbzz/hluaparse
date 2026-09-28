@@ -1,0 +1,32 @@
+// { "luaVersion": "5.5" }
+global = 1                                  -- FAIL
+global                                      -- FAIL
+local global = 1                            -- FAIL
+t.global = 1
+global x
+global x = 1
+global x, y = 1, 2
+global <const> x = 1
+global x <const> = 1
+global <const> x, <close> y
+global *
+global <const> *
+global function f() end
+global function a.b.c() end                 -- FAIL
+local <const> x = 1
+local <const> x, <close> y = 1, 2
+function f(...) end
+function f(...args) end
+function f(a, ...rest) return rest end
+function f(a, b, ...args) return args end
+local function f(...args) return args end
+// { "luaVersion": "5.4" }
+global = 1
+global x = 1                                -- FAIL
+global *                                    -- FAIL
+local <const> x = 1                        -- FAIL
+function f(...args) end                     -- FAIL
+// { "luaVersion": "5.5", "globalKeyword": false }
+global = 1
+// { "luaVersion": "5.4", "globalKeyword": true }
+global = 1                                  -- FAIL

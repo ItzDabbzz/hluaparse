@@ -57,11 +57,25 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "nil",
-      "result": "[1:0] unexpected symbol 'nil' near '<eof>'"
+      "result": "[1:0] unexpected symbol 'nil' near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "return;",
@@ -103,11 +117,25 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": ";",
-      "result": "[1:0] unexpected symbol ';' near '<eof>'"
+      "result": "[1:0] unexpected symbol ';' near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "return;",

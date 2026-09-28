@@ -136,11 +136,25 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a = -",
-      "result": "[1:5] <expression> expected near '<eof>'"
+      "result": "[1:5] <expression> expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = not 10",
@@ -261,23 +275,58 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a = not",
-      "result": "[1:7] <expression> expected near '<eof>'"
+      "result": "[1:7] <expression> expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = 1 +",
-      "result": "[1:7] <expression> expected near '<eof>'"
+      "result": "[1:7] <expression> expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = 1 ..",
-      "result": "[1:8] <expression> expected near '<eof>'"
+      "result": "[1:8] <expression> expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = 1 * /",
-      "result": "[1:8] <expression> expected near '/'"
+      "result": "[1:8] <expression> expected near '/'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = 1 + -2; a = 1 - -2",
@@ -549,11 +598,25 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a = 1 * -",
-      "result": "[1:9] <expression> expected near '<eof>'"
+      "result": "[1:9] <expression> expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = 1 * not 2; a = 1 / not 2",
@@ -825,11 +888,25 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a = 1 / not",
-      "result": "[1:11] <expression> expected near '<eof>'"
+      "result": "[1:11] <expression> expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = 1 + 2 - 3 * 4 / 5 ^ 6",
@@ -1117,19 +1194,47 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a = ((1",
-      "result": "[1:7] ')' expected near '<eof>'"
+      "result": "[1:7] ')' expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = ((1 + 2)",
-      "result": "[1:12] ')' expected near '<eof>'"
+      "result": "[1:12] ')' expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = 1)",
-      "result": "[1:5] unexpected symbol ')' near '<eof>'"
+      "result": "[1:5] unexpected symbol ')' near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = a + b - c",
@@ -1344,6 +1449,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1484,6 +1596,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1661,6 +1780,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1838,6 +1964,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1976,6 +2109,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2120,6 +2260,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2315,6 +2462,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2551,6 +2705,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2839,23 +3000,58 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a = 1 ==",
-      "result": "[1:8] <expression> expected near '<eof>'"
+      "result": "[1:8] <expression> expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = `",
-      "result": "[1:5] unexpected symbol '`' near '='"
+      "result": "[1:5] unexpected symbol '`' near '='",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = ~",
-      "result": "[1:5] unexpected symbol '~' near '='"
+      "result": "[1:5] unexpected symbol '~' near '='",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = ~= 2",
-      "result": "[1:4] <expression> expected near '~='"
+      "result": "[1:4] <expression> expected near '~='",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = a ~= b",
@@ -3014,6 +3210,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -3191,15 +3394,36 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a = 1 and",
-      "result": "[1:9] <expression> expected near '<eof>'"
+      "result": "[1:9] <expression> expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = or 1",
-      "result": "[1:4] <expression> expected near 'or'"
+      "result": "[1:4] <expression> expected near 'or'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a = {} and {} or {}",
@@ -3373,6 +3597,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -3550,6 +3781,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {

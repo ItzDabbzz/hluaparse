@@ -64,6 +64,7 @@
       , './spec/break'
       , './spec/comments'
       , './spec/conditional'
+      , './spec/continue'
       , './spec/do'
       , './spec/escapesequences'
       , './spec/expressions'
@@ -71,6 +72,7 @@
       , './spec/functioncalls'
       , './spec/functions'
       , './spec/labels'
+      , './spec/lua55'
       , './spec/literals'
       , './spec/local'
       , './spec/misc'
@@ -275,6 +277,25 @@
         case 'BreakStatement':
         case 'ContinueStatement':
         case 'Comment':
+          break;
+        // Lua 5.4 attribute syntax and Lua 5.5 additions. Only the child keys
+        // are visited: `name` on these nodes is a nested Identifier node, not
+        // the string a bare Identifier carries, so it must be visited here
+        // while `Attribute.name` (a string) must not be.
+        case 'Attribute':
+          break;
+        case 'IdentifierWithAttribute':
+        case 'GlobalIdentifier':
+        case 'VarargWithName':
+          visitKey('name');
+          visitKey('attribute');
+          break;
+        case 'GlobalStatement':
+          visitKey('variables');
+          visitKey('init');
+          break;
+        case 'GlobalWildcardStatement':
+          visitKey('attribute');
           break;
         default:
           throw new Error('Unhandled ' + node.type);

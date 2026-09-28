@@ -1,3 +1,4 @@
+// { "luaVersion": "5.1" }
 goto "foo"
 ::foo::                                 -- FAIL
 goto foo                                -- FAIL

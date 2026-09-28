@@ -1,0 +1,29 @@
+// { "luaVersion": "FiveM5.4" }
+continue                                   -- FAIL
+do continue end                            -- FAIL
+for i=1,10 do continue end
+while true do continue end
+repeat continue until true
+for i=1,10 do for j=1,10 do continue end end
+for k,v in pairs(t) do continue end
+for i=1,10 do continue; end
+for i=1,10 do if i==2 then continue end print(i) end
+for a in b do continue end
+while 0 do continue end
+repeat continue until 0
+// { "luaVersion": "5.1" }
+local continue = 1
+continue = 1
+t.continue = 1
+// { "luaVersion": "5.2" }
+while 0 do continue end
+// { "luaVersion": "5.3" }
+while 0 do continue end
+// { "luaVersion": "5.4" }
+while 0 do continue end
+// { "luaVersion": "LuaJIT" }
+while 0 do continue end
+// { "luaVersion": "5.1", "continueKeyword": true }
+while 0 do continue end
+// { "luaVersion": "5.4", "continueKeyword": false }
+local continue = 1

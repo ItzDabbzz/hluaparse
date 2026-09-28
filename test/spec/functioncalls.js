@@ -19,7 +19,14 @@
   exports.spec = [
     {
       "source": "a(",
-      "result": "[1:2] ')' expected near '<eof>'"
+      "result": "[1:2] ')' expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a()",
@@ -117,6 +124,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -235,15 +249,36 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a(,1)",
-      "result": "[1:2] ')' expected near ','"
+      "result": "[1:2] ')' expected near ','",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a(1,)",
-      "result": "[1:4] <expression> expected near ')'"
+      "result": "[1:4] <expression> expected near ')'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a(1,2,3)",
@@ -399,11 +434,25 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "1()",
-      "result": "[1:0] unexpected number '1' near '('"
+      "result": "[1:0] unexpected number '1' near '('",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a()()",
@@ -519,6 +568,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -653,6 +709,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -806,23 +869,58 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a.1",
-      "result": "[1:1] '=' expected near '.1'"
+      "result": "[1:1] '=' expected near '.1'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a.b",
-      "result": "[1:3] '=' expected near '<eof>'"
+      "result": "[1:3] '=' expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a[b]",
-      "result": "[1:4] '=' expected near '<eof>'"
+      "result": "[1:4] '=' expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a.b.(",
-      "result": "[1:4] <name> expected near '('"
+      "result": "[1:4] <name> expected near '('",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a.b.c()",
@@ -992,6 +1090,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1200,6 +1305,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1389,6 +1501,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1578,6 +1697,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1712,15 +1838,36 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a:b",
-      "result": "[1:3] function arguments expected near '<eof>'"
+      "result": "[1:3] function arguments expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a:1",
-      "result": "[1:2] <name> expected near '1'"
+      "result": "[1:2] <name> expected near '1'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a.b:c()",
@@ -1890,6 +2037,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2079,11 +2233,25 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a:b:",
-      "result": "[1:3] function arguments expected near ':'"
+      "result": "[1:3] function arguments expected near ':'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a:b():c()",
@@ -2271,6 +2439,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2369,11 +2544,25 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "()()",
-      "result": "[1:1] <expression> expected near ')'"
+      "result": "[1:1] <expression> expected near ')'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "(\"foo\")()",
@@ -2451,6 +2640,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2567,6 +2763,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2701,6 +2904,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2854,6 +3064,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2988,6 +3205,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -3104,11 +3328,25 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a\"foo",
-      "result": "[1:7] unfinished string near '\"foo'"
+      "result": "[1:7] unfinished string near '\"foo'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a[[foo]]",
@@ -3224,6 +3462,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -3376,6 +3621,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -3547,6 +3799,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -3699,6 +3958,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -3833,6 +4099,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -3967,6 +4240,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -4137,6 +4417,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -4326,6 +4613,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -4496,6 +4790,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -4648,6 +4949,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -4817,6 +5125,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -5132,6 +5447,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -5447,6 +5769,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -5616,6 +5945,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -5749,6 +6085,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -5918,6 +6261,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -6106,6 +6456,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -6275,6 +6632,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -6426,6 +6790,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -6577,6 +6948,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -6764,6 +7142,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -6970,6 +7355,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -7157,6 +7549,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -7343,6 +7742,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -7692,6 +8098,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -8041,23 +8454,58 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "(a\"\")",
-      "result": "[1:5] unexpected symbol near '<eof>'"
+      "result": "[1:5] unexpected symbol near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "(a())",
-      "result": "[1:5] unexpected symbol near '<eof>'"
+      "result": "[1:5] unexpected symbol near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "(a{})",
-      "result": "[1:5] unexpected symbol near '<eof>'"
+      "result": "[1:5] unexpected symbol near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a\n()",
-      "result": "[2:3] ambiguous syntax (function call x new statement) near '('"
+      "result": "[2:3] ambiguous syntax (function call x new statement) near '('",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a\n\"\"",
@@ -8173,6 +8621,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -8306,11 +8761,25 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a.b\n()",
-      "result": "[2:3] ambiguous syntax (function call x new statement) near '('"
+      "result": "[2:3] ambiguous syntax (function call x new statement) near '('",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a.b\n\"\"",
@@ -8462,6 +8931,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -8631,11 +9107,25 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "a:b\n()",
-      "result": "[2:3] ambiguous syntax (function call x new statement) near '('"
+      "result": "[2:3] ambiguous syntax (function call x new statement) near '('",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "a:b\n\"\"",
@@ -8787,6 +9277,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -8956,23 +9453,58 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "(a\n())",
-      "result": "[2:3] ambiguous syntax (function call x new statement) near '('"
+      "result": "[2:3] ambiguous syntax (function call x new statement) near '('",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "(a\n\"\")",
-      "result": "[2:3] unexpected symbol near '<eof>'"
+      "result": "[2:3] unexpected symbol near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "(a\n{})",
-      "result": "[2:3] unexpected symbol near '<eof>'"
+      "result": "[2:3] unexpected symbol near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "(a)\n()",
-      "result": "[2:3] ambiguous syntax (function call x new statement) near '('"
+      "result": "[2:3] ambiguous syntax (function call x new statement) near '('",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "(a)\n\"\"",
@@ -9088,6 +9620,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -9221,6 +9760,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {

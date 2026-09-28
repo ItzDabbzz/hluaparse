@@ -19,31 +19,80 @@
   exports.spec = [
     {
       "source": "break",
-      "result": "[1:5] no loop to break near '<eof>'"
+      "result": "[1:5] no loop to break near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "do break end",
-      "result": "[1:9] no loop to break near 'end'"
+      "result": "[1:9] no loop to break near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "if 0 then break end",
-      "result": "[1:16] no loop to break near 'end'"
+      "result": "[1:16] no loop to break near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "if 0 then else break end",
-      "result": "[1:21] no loop to break near 'end'"
+      "result": "[1:21] no loop to break near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "while 0 do function x() break end end",
-      "result": "[1:30] no loop to break near 'end'"
+      "result": "[1:30] no loop to break near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "repeat function x() break end until 0",
-      "result": "[1:26] no loop to break near 'end'"
+      "result": "[1:26] no loop to break near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "repeat x = function() break end until 0",
-      "result": "[1:28] no loop to break near 'end'"
+      "result": "[1:28] no loop to break near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "repeat break until 0",
@@ -122,6 +171,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -220,6 +276,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -356,6 +419,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -510,6 +580,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -589,6 +666,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -668,11 +752,25 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "while 0 do break;; end",
-      "result": "[1:17] 'end' expected near ';'"
+      "result": "[1:17] 'end' expected near ';'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "while 0 do do break end end",
@@ -770,6 +868,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -906,6 +1011,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1060,6 +1172,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1178,6 +1297,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1315,6 +1441,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1490,6 +1623,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1683,6 +1823,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1805,6 +1952,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1946,6 +2100,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2125,6 +2286,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2322,15 +2490,36 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "function x() break end",
-      "result": "[1:19] no loop to break near 'end'"
+      "result": "[1:19] no loop to break near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "local function x() break end",
-      "result": "[1:25] no loop to break near 'end'"
+      "result": "[1:25] no loop to break near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "function x() repeat break until 0 end",
@@ -2469,6 +2658,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {

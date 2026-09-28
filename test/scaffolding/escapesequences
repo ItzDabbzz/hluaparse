@@ -1,3 +1,4 @@
+// { "luaVersion": "5.1" }
 a = "bar@n@baz"                 -- FAIL
 a = "bar@r@baz"                 -- FAIL
 a = "bar\n\r\t@t@baz"

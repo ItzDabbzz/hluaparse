@@ -131,15 +131,36 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "::foo::",
-      "result": "[1:0] unexpected symbol ':' near ':'"
+      "result": "[1:0] unexpected symbol ':' near ':'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "goto foo",
-      "result": "[1:5] '=' expected near 'foo'"
+      "result": "[1:5] '=' expected near 'foo'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "::foo",

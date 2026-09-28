@@ -1,3 +1,4 @@
+// { "luaVersion": "5.1" }
 a                                         -- FAIL
 a = 1
 a = .1

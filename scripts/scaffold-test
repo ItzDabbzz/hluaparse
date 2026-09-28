@@ -181,7 +181,9 @@ args.forEach(function(arg, index) {
       .split("\n")
       .forEach(function(snippet) {
         if (!snippet.length) return;
-        snippets.push(snippet.replace(/\n$/, ''));
+        // Scaffolding files are checked out with CRLF endings on Windows;
+        // strip the trailing CR so it never leaks into a test source.
+        snippets.push(snippet.replace(/\r$/, ''));
       });
   }
   return;

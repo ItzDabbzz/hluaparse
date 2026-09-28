@@ -19,55 +19,146 @@
   exports.spec = [
     {
       "source": "for",
-      "result": "[1:3] <name> expected near '<eof>'"
+      "result": "[1:3] <name> expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for do",
-      "result": "[1:4] <name> expected near 'do'"
+      "result": "[1:4] <name> expected near 'do'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for end",
-      "result": "[1:4] <name> expected near 'end'"
+      "result": "[1:4] <name> expected near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for 1",
-      "result": "[1:4] <name> expected near '1'"
+      "result": "[1:4] <name> expected near '1'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a",
-      "result": "[1:5] 'in' expected near '<eof>'"
+      "result": "[1:5] 'in' expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for true",
-      "result": "[1:4] <name> expected near 'true'"
+      "result": "[1:4] <name> expected near 'true'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a, in",
-      "result": "[1:7] <name> expected near 'in'"
+      "result": "[1:7] <name> expected near 'in'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a in",
-      "result": "[1:8] <expression> expected near '<eof>'"
+      "result": "[1:8] <expression> expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a do",
-      "result": "[1:6] 'in' expected near 'do'"
+      "result": "[1:6] 'in' expected near 'do'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a in do",
-      "result": "[1:9] <expression> expected near 'do'"
+      "result": "[1:9] <expression> expected near 'do'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a in b do",
-      "result": "[1:13] 'end' expected near '<eof>'"
+      "result": "[1:13] 'end' expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a in b end",
-      "result": "[1:11] 'do' expected near 'end'"
+      "result": "[1:11] 'do' expected near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a in b, do",
-      "result": "[1:12] <expression> expected near 'do'"
+      "result": "[1:12] <expression> expected near 'do'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a in b do end",
@@ -171,6 +262,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -354,6 +452,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -537,19 +642,47 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "for a in b do 1 end",
-      "result": "[1:14] unexpected number '1' near 'end'"
+      "result": "[1:14] unexpected number '1' near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a in b do \"foo\" end",
-      "result": "[1:14] unexpected string '\"foo\"' near 'end'"
+      "result": "[1:14] unexpected string '\"foo\"' near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a b in",
-      "result": "[1:6] 'in' expected near 'b'"
+      "result": "[1:6] 'in' expected near 'b'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a, b, c in p do end",
@@ -691,6 +824,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -909,6 +1049,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -993,6 +1140,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1077,6 +1231,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1161,6 +1322,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1283,11 +1451,25 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "for a in b do break break end",
-      "result": "[1:20] 'end' expected near 'break'"
+      "result": "[1:20] 'end' expected near 'break'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a in b do return end",
@@ -1410,11 +1592,25 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "for a in b do return return end",
-      "result": "[1:21] 'end' expected near 'return'"
+      "result": "[1:21] 'end' expected near 'return'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a in b do do end end",
@@ -1537,6 +1733,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1678,6 +1881,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -1820,43 +2030,113 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "for =",
-      "result": "[1:4] <name> expected near '='"
+      "result": "[1:4] <name> expected near '='",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a =",
-      "result": "[1:7] <expression> expected near '<eof>'"
+      "result": "[1:7] <expression> expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a, b =",
-      "result": "[1:9] 'in' expected near '='"
+      "result": "[1:9] 'in' expected near '='",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a = do",
-      "result": "[1:8] <expression> expected near 'do'"
+      "result": "[1:8] <expression> expected near 'do'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a = 1, do",
-      "result": "[1:11] <expression> expected near 'do'"
+      "result": "[1:11] <expression> expected near 'do'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a = p, q, do",
-      "result": "[1:14] <expression> expected near 'do'"
+      "result": "[1:14] <expression> expected near 'do'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a = p q do",
-      "result": "[1:10] ',' expected near 'q'"
+      "result": "[1:10] ',' expected near 'q'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a = b do end",
-      "result": "[1:10] ',' expected near 'do'"
+      "result": "[1:10] ',' expected near 'do'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a = 1, 2, 3, 4 do end",
-      "result": "[1:15] 'do' expected near ','"
+      "result": "[1:15] 'do' expected near ','",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a = p, q do end",
@@ -1995,6 +2275,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2095,6 +2382,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2274,6 +2568,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2453,15 +2754,36 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "for a = 1, 2 do 3 end",
-      "result": "[1:16] unexpected number '3' near 'end'"
+      "result": "[1:16] unexpected number '3' near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a = 1, 2 do \"foo\" end",
-      "result": "[1:16] unexpected string '\"foo\"' near 'end'"
+      "result": "[1:16] unexpected string '\"foo\"' near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a = p, q, r do end",
@@ -2637,6 +2959,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2755,6 +3084,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -2912,11 +3248,25 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "for a = p, q do break break end",
-      "result": "[1:22] 'end' expected near 'break'"
+      "result": "[1:22] 'end' expected near 'break'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a = 1, 2 do return end",
@@ -3035,11 +3385,25 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "for a = 1, 2 do return return end",
-      "result": "[1:23] 'end' expected near 'return'"
+      "result": "[1:23] 'end' expected near 'return'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "for a = p, q do do end end",
@@ -3197,6 +3561,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -3373,6 +3744,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -3550,6 +3928,13 @@
             "isLocal": false
           }
         ]
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {

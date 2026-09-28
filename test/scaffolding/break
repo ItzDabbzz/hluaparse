@@ -1,3 +1,4 @@
+// { "luaVersion": "5.1" }
 break                                   -- FAIL
 do break end                            -- FAIL
 if 0 then break end                     -- FAIL

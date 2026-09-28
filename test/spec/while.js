@@ -19,19 +19,47 @@
   exports.spec = [
     {
       "source": "while",
-      "result": "[1:5] <expression> expected near '<eof>'"
+      "result": "[1:5] <expression> expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "while do",
-      "result": "[1:6] <expression> expected near 'do'"
+      "result": "[1:6] <expression> expected near 'do'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "while =",
-      "result": "[1:6] <expression> expected near '='"
+      "result": "[1:6] <expression> expected near '='",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "while 1 do",
-      "result": "[1:10] 'end' expected near '<eof>'"
+      "result": "[1:10] 'end' expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "while 1 do end",
@@ -92,6 +120,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -193,6 +228,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -333,6 +375,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -473,15 +522,36 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "while 1 do 2 end",
-      "result": "[1:11] unexpected number '2' near 'end'"
+      "result": "[1:11] unexpected number '2' near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "while 1 do \"foo\" end",
-      "result": "[1:11] unexpected string '\"foo\"' near 'end'"
+      "result": "[1:11] unexpected string '\"foo\"' near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "while true do end",
@@ -542,27 +612,69 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "while 1 do ; end",
-      "result": "[1:11] unexpected symbol ';' near 'end'"
+      "result": "[1:11] unexpected symbol ';' near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "while 1 do while",
-      "result": "[1:16] <expression> expected near '<eof>'"
+      "result": "[1:16] <expression> expected near '<eof>'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "while 1 end",
-      "result": "[1:8] 'do' expected near 'end'"
+      "result": "[1:8] 'do' expected near 'end'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "while 1 2 do",
-      "result": "[1:8] 'do' expected near '2'"
+      "result": "[1:8] 'do' expected near '2'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "while 1 = 2 do",
-      "result": "[1:8] 'do' expected near '='"
+      "result": "[1:8] 'do' expected near '='",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "while 1 do return end",
@@ -642,11 +754,25 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "while 1 do return return end",
-      "result": "[1:18] 'end' expected near 'return'"
+      "result": "[1:18] 'end' expected near 'return'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "while 1 do do end end",
@@ -726,6 +852,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -825,6 +958,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
@@ -904,11 +1044,25 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {
       "source": "while 1 do break break end",
-      "result": "[1:17] 'end' expected near 'break'"
+      "result": "[1:17] 'end' expected near 'break'",
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
+      }
     },
     {
       "source": "while 1 do do break end end",
@@ -1006,6 +1160,13 @@
         ],
         "comments": [],
         "globals": []
+      },
+      "options": {
+        "comments": true,
+        "locations": true,
+        "ranges": true,
+        "scope": true,
+        "luaVersion": "5.1"
       }
     },
     {

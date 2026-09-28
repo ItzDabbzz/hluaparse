@@ -1,3 +1,4 @@
+// { "luaVersion": "5.1" }
 repeat                                  -- FAIL
 repeat until                            -- FAIL
 repeat until 0

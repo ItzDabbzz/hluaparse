@@ -1,3 +1,4 @@
+// { "luaVersion": "5.1" }
 a = -"foo"
 a = -                                   -- FAIL
 a = not 10
