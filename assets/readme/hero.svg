@@ -43,7 +43,7 @@
       <text class="mono acc" x="256" y="32" font-size="24" font-weight="600">5.1&#8211;5.5</text>
       <text class="sans mut" x="256" y="56" font-size="15">Lua versions</text>
 
-      <text class="mono acc" x="404" y="32" font-size="24" font-weight="600">16</text>
+      <text class="mono acc" x="404" y="32" font-size="24" font-weight="600">15</text>
       <text class="sans mut" x="404" y="56" font-size="15">engines tested</text>
     </g>
 

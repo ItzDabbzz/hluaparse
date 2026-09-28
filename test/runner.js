@@ -4,6 +4,12 @@
     , isModule = typeof require === 'function' && typeof exports === 'object' && exports && !isLoader
     , isBrowser = 'window' in root && root.window === root && typeof root.navigator !== 'undefined'
     , isEngine = !isBrowser && !isModule && typeof root.load === 'function'
+    // A real Node host. The six UMD assertions below need fs, vm and
+    // process, and `require` alone does not identify one: RingoJS has a
+    // require() shim but no fs, no vm and no process, and taking that
+    // branch there killed the run. Used by both the block and its count.
+    , isNodeLike = typeof process === 'object' && typeof require === 'function' && !!process.versions && !!process.versions.node
+    , nodeHost = isNodeLike
     , isTestem = isBrowser && root.location.hash === '#testem'
     // Use the console reporter
     , isConsole = typeof process === 'object' && process.argv && process.argv.indexOf('--console') >= 0;
@@ -686,7 +692,12 @@
 
         // Load luaparse.js the way a browser does -- no `module`, no `exports` --
     // so the UMD wrapper assigns globals. require() never takes those branches.
-    if (typeof require === 'function' && !isEngine) {
+    //
+    // `process.versions.node` is the real test for a Node host, not
+    // `typeof require`: RingoJS installs a require() shim but has no fs, no vm
+    // and no process, so matching on require alone sent it into this block and
+    // it died on the first call.
+    if (nodeHost) {
       var fs = require('fs'), vm = require('vm'), pathMod = require('path');
       var umdSource = fs.readFileSync(pathMod.join(process.cwd(), 'luaparse.js'), 'utf8');
       var browserGlobal = {};
@@ -724,11 +735,10 @@
     }
 
     // The total depends on the engine. Six of these assertions live in the
-    // Node-only block above, which is gated on having a real `require`; every
-    // script-loading engine skips it and runs 23 instead of 29. `isEngine`
-    // alone is not the right test for that: QuickJS exposes __loadScript but
-    // not root.load, so it is not isEngine and still has no require().
-    this.done(typeof require === 'function' && !isEngine ? 29 : 23);
+    // Node-only block above, which is gated on `nodeHost`; every other engine
+    // skips it and runs 23 instead of 29. Both sides read the same flag, so
+    // the count cannot drift from the block it is counting.
+    this.done(nodeHost ? 29 : 23);
   });
 
   suite.addTest('Option validation', function() {

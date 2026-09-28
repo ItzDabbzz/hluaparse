@@ -15,9 +15,13 @@ saw_summary=0
 # "INFO ok 1 <name>". Strip a leading "INFO "/"DEBUG "/"WARN " so the TAP
 # grammar can be matched, but keep printing the original line.
 strip_prefix() {
-	case "$1" in
-		INFO\ *|DEBUG\ *|WARN\ *) printf '%s' "${1#* }" ;;
-		*) printf '%s' "$1" ;;
+	# Drop the trailing CR first. Engines that emit CRLF (Java on Linux does)
+	# otherwise leave "# fail 0\r", which never compares equal to "0" and made
+	# a complete 3150-test Rhino run look like no output at all.
+	line="${1%$'\r'}"
+	case "$line" in
+		INFO\ *|DEBUG\ *|WARN\ *) printf '%s' "${line#* }" ;;
+		*) printf '%s' "$line" ;;
 	esac
 }
 
