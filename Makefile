@@ -116,8 +116,13 @@ coverage-analysis: coverage
 qa:
 	$(MAKE) test lint complexity-analysis coverage-analysis
 
+# The ES5-only engines in CI cannot parse the ES6 source, so they are run
+# against this generated downlevelled build instead.
+build-es5:
+	node scripts/build-es5
+
 clean:
 	rm -f docs/*.html
-	rm -rf lib-cov coverage html-report docs/coverage/
+	rm -rf lib-cov coverage html-report docs/coverage/ dist/
 
-.PHONY: complexity-analysis coverage-analysis qa clean
+.PHONY: complexity-analysis coverage-analysis qa clean build-es5

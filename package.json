@@ -1,7 +1,7 @@
 {
   "name": "hluaparse",
   "version": "1.0.0",
-  "description": "A Lua parser in JavaScript - maintained by ItzDabbzz for Homestead Systems. Originally by Oskar Schöldström, with FiveM Lua support.",
+  "description": "A Lua parser in JavaScript - maintained by ItzDabbzz for Homestead Systems. Originally by Oskar Sch\u00f6ldstr\u00f6m, with FiveM Lua support.",
   "keywords": [
     "ast",
     "lua",
@@ -15,14 +15,15 @@
   "homepage": "https://github.com/ItzDabbzz/hluaparse#readme",
   "bugs": "https://github.com/ItzDabbzz/hluaparse/issues",
   "license": "MIT",
-  "author": "Oskar Schöldström <public@oxy.fi> (http://www.oxy.fi/) (original author)",
+  "author": "Oskar Sch\u00f6ldstr\u00f6m <public@oxy.fi> (http://www.oxy.fi/) (original author)",
   "files": [
-    "README.md",
     "LICENSE",
-    "luaparse.js",
+    "README.md",
     "bin/luaparse",
+    "dist/luaparse.es5.js",
     "lib/ast.d.ts",
-    "luaparse.d.ts"
+    "luaparse.d.ts",
+    "luaparse.js"
   ],
   "types": "luaparse.d.ts",
   "main": "luaparse.js",
@@ -36,11 +37,13 @@
   },
   "scripts": {
     "test": "make qa",
-    "version": "make version-bump"
+    "version": "make version-bump",
+    "build-es5": "node scripts/build-es5"
   },
   "devDependencies": {
     "benchmark": "~1.0.0",
     "complexity-report": "~0.10.5",
+    "esbuild": "^0.28.2",
     "gulp": "^4.0.0",
     "gulp-add-src": "^1.0.0",
     "gulp-header": "^2.0.9",
@@ -67,5 +70,8 @@
     "complexity-report": {
       "esprima": "^4.0.1"
     }
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
   }
 }

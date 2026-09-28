@@ -10,3 +10,6 @@ npm-debug.log
 
 .nyc_output
 .nyc_data
+
+# generated ES5 build (scripts/build-es5)
+dist/
