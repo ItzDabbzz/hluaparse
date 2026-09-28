@@ -65,25 +65,47 @@
   // they are run against dist/luaparse.es5.js instead. It is generated from
   // luaparse.js by scripts/build-es5 and is behaviourally identical.
   //
-  // The path is always relative to this file's directory. Under Node the
-  // engine is launched with `node test/runner.js` from the repository root,
-  // so require() would otherwise resolve it against the wrong directory --
-  // resolve it explicitly instead.
+  // Resolve against this file's directory rather than the process cwd: under
+  // Node the engine is launched as `node test/runner.js` from the repository
+  // root, so a bare relative require() would look in the wrong place.
+  //
+  // RingoJS also reports isModule -- it has a CommonJS shim -- but exposes no
+  // __dirname, so that case has to be excluded explicitly or the reference
+  // throws before a single test runs.
   var entry = '../luaparse';
   if (typeof process === 'object' && process.env && process.env.LUAPARSE_ENTRY) {
     entry = process.env.LUAPARSE_ENTRY;
   }
-  if (isModule && entry.charAt(0) === '.') {
+  // Prefer a path anchored to this file. Under Node that removes any
+  // dependence on the process cwd. Not every engine that looks like a module
+  // exposes __dirname though (RingoJS does not), so this is best-effort and
+  // require() is allowed to fall back to the relative path below.
+  if (typeof __dirname === 'string' && entry.charAt(0) === '.') {
     entry = __dirname + '/' + entry;
   }
   var entryFile = entry.replace(/\.js$/, '') + '.js';
 
-  var luaparse = isModule ? require(entry) : null;
+  var luaparse = null;
+  if (isModule) {
+    try {
+      luaparse = require(entry);
+    } catch (e) {
+      // An engine whose require() cannot resolve the anchored path (no
+      // __dirname, or a different module root) still gets a second chance
+      // with the path as given, which is relative to the runner.
+      if (typeof __dirname === 'string') throw e;
+      luaparse = require('../luaparse');
+    }
+  }
 
   if (!isModule) {
-    if (isEngine) root.load(entryFile);
-    else if (typeof Duktape !== 'undefined' && typeof readFile === 'function') {
-      makeLoader(function (filename) {
+    if (isEngine) {
+      root.load(entryFile);
+    } else if (typeof Duktape !== 'undefined' && typeof readFile === 'function') {
+      // Duktape has no module system: makeLoader evaluates the file and hands
+      // back the exports object the UMD factory populated. It does NOT create
+      // a global, so the return value has to be used directly.
+      luaparse = makeLoader(function (filename) {
         /*global readFile, TextDecoder */
         return (new TextDecoder('utf-8')).decode(readFile(filename));
       })('hluaparse', entryFile);
@@ -92,7 +114,7 @@
     }
     // `fivem-luaparse` is only addressable in bracket form; see the UMD
     // wrapper, which assigns both names to the same object.
-    luaparse = root.luaparse || root.hluaparse || root['fivem-luaparse'];
+    luaparse = luaparse || root.luaparse || root.hluaparse || root['fivem-luaparse'];
   }
 
   var Spec = load('Spec', './lib/spec')
@@ -686,9 +708,12 @@
         'no global is created when define() is present');
     }
 
-    // The count depends on the engine: the `vm`/`fs` based UMD assertions are
-    // Node-only, so scripting engines legitimately run fewer of them.
-    this.done(isEngine ? 23 : 29);
+    // The total depends on the engine. Six of these assertions live in the
+    // Node-only block above, which is gated on having a real `require`; every
+    // script-loading engine skips it and runs 23 instead of 29. `isEngine`
+    // alone is not the right test for that: QuickJS exposes __loadScript but
+    // not root.load, so it is not isEngine and still has no require().
+    this.done(typeof require === 'function' && !isEngine ? 29 : 23);
   });
 
   suite.addTest('Option validation', function() {
