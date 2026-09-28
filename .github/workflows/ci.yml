@@ -209,6 +209,11 @@ jobs:
           make -C luaparse install docs
           mv luaparse/docs/* .
           mv luaparse/examples .
+          # assets/ holds the README hero and the social preview that
+          # docs/index.html references. Without this step they are absent
+          # from the deployed site and the img 404s.
+          rm -rf assets
+          cp -r luaparse/assets assets
           mv luaparse/luaparse.js .
           mv luaparse/benchmarks .
           cp -rf luaparse/test .
