@@ -289,15 +289,16 @@ identifiers.</p>
 <p>No runtime dependencies. Ships TypeScript declarations. Runs in Node, browsers,
 Rhino, Duktape, QuickJS and RingoJS.</p>
 <h2 id="install">Install</h2>
-<p>Releases are published on GitHub, not npm.</p>
-<pre><code class="language-bash">git clone https://github.com/ItzDabbzz/hluaparse.git
-cd hluaparse
-npm install
+<pre><code class="language-bash">npm install hluaparse
 </code></pre>
 <p>Then <code>require</code> it:</p>
-<pre><code class="language-js">const hluaparse = require(&#39;./luaparse&#39;);
+<pre><code class="language-js">const hluaparse = require(&#39;hluaparse&#39;);
 
 const ast = hluaparse.parse(&#39;i = 0&#39;);
+</code></pre>
+<p>On engines that cannot parse modern JavaScript — Duktape 2.4, older QuickJS,
+Rhino — load the downlevelled build instead:</p>
+<pre><code class="language-js">const hluaparse = require(&#39;hluaparse/dist/luaparse.es5.js&#39;);
 </code></pre>
 <p>In a browser the UMD build exposes two globals: <code>hluaparse</code>, and
 <code>fivem-luaparse</code> as a compatibility alias for existing FiveM resources.</p>
@@ -630,10 +631,13 @@ into.</p>
 It is generated, never hand-edited, and behaves identically — both files pass
 the full suite.</p>
 <p>Beyond its own suite, releases are checked differentially against real Lua
-compilers: a corpus of 548 constructs is parsed by both <code>hluaparse</code> and <code>luac</code>,
-and any disagreement on accept-or-reject is a bug. That process is how the Lua
-5.1 hex-float bug was found — <code>0xA.8p0</code> was accepted under 5.1, where real
-<code>luac 5.1.5</code> rejects it.</p>
+compilers: a corpus of 217 constructs is parsed by both <code>hluaparse</code> and <code>luac</code>
+(5.1.5, 5.2.4, 5.3.6 and 5.4.2, each built from lua.org source), and any
+disagreement on accept-or-reject is a bug. That process is how two real bugs
+were found — the Lua 5.1 hex-float case, where <code>0xA.8p0</code> was accepted under 5.1
+where real <code>luac 5.1.5</code> rejects it, and the bare length-operator statement,
+where <code>#t</code> on its own is a statement the real compilers accept and discard but
+the parser rejected.</p>
 <p>Lua 5.5 is a draft. No official compiler exists to diff against, so it is
 verified against the 5.5 manual only.</p>
 <h2 id="development">Development</h2>
