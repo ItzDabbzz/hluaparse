@@ -11,20 +11,23 @@ Rhino, Duktape, QuickJS and RingoJS.
 
 ## Install
 
-Releases are published on GitHub, not npm.
-
 ```bash
-git clone https://github.com/ItzDabbzz/hluaparse.git
-cd hluaparse
-npm install
+npm install hluaparse
 ```
 
 Then `require` it:
 
 ```js
-const hluaparse = require('./luaparse');
+const hluaparse = require('hluaparse');
 
 const ast = hluaparse.parse('i = 0');
+```
+
+On engines that cannot parse modern JavaScript — Duktape 2.4, older QuickJS,
+Rhino — load the downlevelled build instead:
+
+```js
+const hluaparse = require('hluaparse/dist/luaparse.es5.js');
 ```
 
 In a browser the UMD build exposes two globals: `hluaparse`, and
@@ -195,10 +198,13 @@ It is generated, never hand-edited, and behaves identically — both files pass
 the full suite.
 
 Beyond its own suite, releases are checked differentially against real Lua
-compilers: a corpus of 548 constructs is parsed by both `hluaparse` and `luac`,
-and any disagreement on accept-or-reject is a bug. That process is how the Lua
-5.1 hex-float bug was found — `0xA.8p0` was accepted under 5.1, where real
-`luac 5.1.5` rejects it.
+compilers: a corpus of 217 constructs is parsed by both `hluaparse` and `luac`
+(5.1.5, 5.2.4, 5.3.6 and 5.4.2, each built from lua.org source), and any
+disagreement on accept-or-reject is a bug. That process is how two real bugs
+were found — the Lua 5.1 hex-float case, where `0xA.8p0` was accepted under 5.1
+where real `luac 5.1.5` rejects it, and the bare length-operator statement,
+where `#t` on its own is a statement the real compilers accept and discard but
+the parser rejected.
 
 Lua 5.5 is a draft. No official compiler exists to diff against, so it is
 verified against the 5.5 manual only.

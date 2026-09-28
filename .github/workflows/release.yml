@@ -19,22 +19,21 @@ jobs:
   publish:
     name: Publish to npm
     runs-on: ubuntu-latest
-    # NPM_TOKEN lives in the Deploy environment, not at repo level, so the job
-    # has to declare it or secrets.NPM_TOKEN resolves to empty and npm fails
-    # with ENEEDAUTH.
-    environment: Deploy
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
           registry-url: https://registry.npmjs.org/
+          # Trusted publishing: npm exchanges this workflow's OIDC identity
+          # for a short-lived token, so no NPM_TOKEN secret is involved.
+          id-token: write
 
-      # Staged publishing needs npm >= 11.15.0 and Node >= 22.14.0. Node 24
+      # Trusted publishing needs npm >= 11.5.1 and Node >= 22.14.0. Node 24
       # satisfies the Node half, but the npm that ships with it is not
       # guaranteed to be new enough, so the floor is asserted rather than
       # assumed.
-      - name: Verify the toolchain supports staged publishing
+      - name: Verify the toolchain supports trusted publishing
         run: |
           # process.versions.npm does not exist, so the version has to come
           # from npm itself.
@@ -42,12 +41,12 @@ jobs:
           echo "npm $NPM_VERSION"
           node -e '
             const [maj, min] = process.argv[1].split(".").map(Number);
-            if (maj < 11 || (maj === 11 && min < 15)) {
+            if (maj < 11 || (maj === 11 && min < 5)) {
               console.error("npm " + process.argv[1] +
-                " is too old; staged publishing needs 11.15.0 or later");
+                " is too old; trusted publishing needs 11.5.1 or later");
               process.exit(1);
             }
-            console.log("npm " + process.argv[1] + " supports staged publishing");
+            console.log("npm " + process.argv[1] + " supports trusted publishing");
           ' "$NPM_VERSION"
 
       # The version in package.json must match the git tag, otherwise the
@@ -82,30 +81,19 @@ jobs:
             || { echo "dist/luaparse.es5.js missing from the tarball"; exit 1; }
           echo "tarball contains the ES5 build"
 
-      # The npm token is a stage-only token, so it cannot publish a version
-      # directly; npm rejects that with a 403. Staging puts the tarball in a
-      # non-public state and a maintainer promotes it with 2FA via
-      # `npm stage approve`. Everything is gated and the tarball verified
-      # before this point, so what gets staged is the tested artifact.
-      - name: Stage the version for review
-        # The ./ prefix is required: without it npm reads the bare filename
-        # as a git spec and tries to clone it over ssh.
-        run: npm stage publish ./staging/*.tgz
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # Trusted publishing: the only credential is this job's OIDC identity,
+      # which npm exchanges for a short-lived token. Nothing long-lived is
+      # stored in the repository, so there is no secret to leak or rotate.
+      # The tarball built above is what ships, so what is published is the
+      # exact artifact the gates were run against.
+      - name: Publish to npm
+        run: npm publish ./staging/*.tgz --access public
 
-      - name: Report what is waiting for approval
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Confirm it landed
         run: |
           PKG=$(node -p "require('./package.json').name")
           VER=$(node -p "require('./package.json').version")
-          npm stage list || true
           {
-            echo
-            echo "Staged \`$PKG@$VER\`, not yet public."
-            echo "A maintainer promotes it with 2FA:"
-            echo "  npm stage list"
-            echo "  npm stage approve <stage-id>"
-            echo "Until then \`npm install $PKG\` will not resolve $VER."
+            echo "Published \`$PKG@$VER\` to npm via trusted publishing."
+            echo "Install: \`npm install $PKG\`"
           } >> "$GITHUB_STEP_SUMMARY"
