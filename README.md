@@ -1,312 +1,233 @@
-# luaparse
+<p align="center">
+  <img src="./assets/readme/hero.svg" width="100%" alt="hluaparse — a Lua parser for JavaScript supporting Lua 5.1 to 5.5 plus the FiveM dialect, with 3156 assertions and 100% coverage">
+</p>
 
-A Lua parser written in JavaScript, originally written by Oskar Schöldström for his bachelor's thesis at Arcada.
+A Lua parser written in JavaScript. Parses **Lua 5.1 through 5.5**, plus
+**FiveM's dialect** — safe navigation, compound assignment, and non-English
+identifiers.
 
-## Installation
+No runtime dependencies. Ships TypeScript declarations. Runs in Node, browsers,
+Rhino, Duktape, QuickJS and RingoJS.
 
-Install through `npm install luaparse`.
+## Install
+
+Releases are published on GitHub, not npm.
+
+```bash
+git clone https://github.com/ItzDabbzz/hluaparse.git
+cd hluaparse
+npm install
+```
+
+Then `require` it:
+
+```js
+const hluaparse = require('./luaparse');
+
+const ast = hluaparse.parse('i = 0');
+```
+
+In a browser the UMD build exposes two globals: `hluaparse`, and
+`fivem-luaparse` as a compatibility alias for existing FiveM resources.
 
 ## Usage
 
-CommonJS
-
 ```js
-var parser = require('luaparse');
-var ast = parser.parse('i = 0');
-console.log(JSON.stringify(ast));
+const ast = hluaparse.parse(code, options);
 ```
 
-AMD
+`parse` returns a plain JSON Abstract Syntax Tree.
 
-```js
-require(['luaparse'], function(parser) {
-  var ast = parser.parse('i = 0');
-  console.log(JSON.stringify(ast));
-});
-```
+### What it parses
 
-Browser
+`luaVersion` selects the dialect. This table is the **measured behaviour of
+this parser**, not documentation of intent — every cell was produced by
+parsing the construct and recording whether it succeeded.
 
-```html
-<script src="luaparse.js"></script>
-<script>
-var ast = luaparse.parse('i = 0');
-console.log(JSON.stringify(ast));
-</script>
-```
+| Feature | 5.1 | 5.2 | 5.3 | 5.4 | 5.5 | FiveM5.4 | LuaJIT |
+| --- | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| `goto` / labels | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Hex float fractions | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `continue` | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| C-style comments `--[[ ]]` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Bitwise `&` | | | ✅ | ✅ | ✅ | ✅ | |
+| Integer division `//` | | | ✅ | ✅ | ✅ | ✅ | |
+| Local attributes `<const>` | | | | ✅ | ✅ | ✅ | |
+| `global` declarations | | | | | ✅ | | |
+| Named varargs `...args` | | | | | ✅ | | |
+| Compound assignment `+=` | | | | | | ✅ | |
+| Safe navigation `?.` | | | | | | ✅ | |
+| Non-English identifiers | | | | | | ✅ | |
 
-## Parser Interface
+Two deliberate divergences, both under `FiveM5.4`:
 
-Basic usage:
+- **Non-English identifiers are accepted.** `local имя = 1` parses. Stock Lua
+  rejects this in every version, which is why it lives behind its own option.
+- **FiveM syntax is accepted.** Its runtime allows it, so the parser matches it.
 
-```js
-luaparse.parse(code, options);
-```
+The stock profiles reject those constructs rather than silently allowing them,
+so a mistake surfaces instead of shipping.
 
-The output of the parser is an Abstract Syntax Tree (AST) formatted in JSON.
+## The AST
 
-The available options are:
-
-- `wait: false` Explicitly tell the parser when the input ends.
-- `comments: true` Store comments as an array in the chunk object.
-- `scope: false` Track identifier scopes.
-- `locations: false` Store location information on each syntax node.
-- `ranges: false` Store the start and end character locations on each syntax
-  node.
-- `onCreateNode: null` A callback which will be invoked when a syntax node
-  has been completed. The node which has been created will be passed as the
-  only parameter.
-- `onCreateScope: null` A callback which will be invoked when a new scope is
-  created.
-- `onDestroyScope: null` A callback which will be invoked when the current
-  scope is destroyed.
-- `onLocalDeclaration: null` A callback which will be invoked when a local
-  variable is declared. The identifier will be passed as the only parameter.
-- `luaVersion: '5.1'` The version of Lua the parser will target; supported
-  values are `'5.1'`, `'5.2'`, `'5.3'`, `'5.4'`, `'5.5'`, `'FiveM5.4'` and
-  `'LuaJIT'`.
-- `extendedIdentifiers: false` Whether to allow code points ≥ U+0080 in
-  identifiers, like LuaJIT does. Defaults to `true` for `'FiveM5.4'`, whose
-  runtime accepts non-English variable names, and `false` everywhere else,
-  matching stock Lua, which rejects them in every version. **Note:** setting
-  `luaVersion: 'LuaJIT'` currently does *not* enable this option; this may
-  change in the future.
-- `encodingMode: 'none'` Defines the relation between code points ≥ U+0080
-  appearing in parser input and raw bytes in source code, and how Lua escape
-  sequences in JavaScript strings should be interpreted. See the
-  [Encoding modes](#encoding-modes) section below for more information.
-
-The default options are also exposed through `luaparse.defaultOptions` where
-they can be overriden globally.
-
-There is a second interface which might be preferable when using the `wait`
-option.
-
-```js
-var parser = luaparse.parse({ wait: true });
-parser.write('foo = "');
-parser.write('bar');
-var ast = parser.end('"');
-```
-
-This would be identical to:
-
-```js
-var ast = luaparse.parse('foo = "bar"');
-```
-
-### AST format
-
-If the following code is executed:
-
-```js
-luaparse.parse('foo = "bar"');
-```
-
-then the returned value will be:
+Every node follows one rule: the type name, then that node's own fields. Child
+nodes are always real child nodes, never folded into a caption. For
+`local x = 1 + 2` you get:
 
 ```js
 {
   "type": "Chunk",
   "body": [
-    {
-      "type": "AssignmentStatement",
-      "variables": [
-        {
-          "type": "Identifier",
-          "name": "foo"
-        }
-      ],
-      "init": [
-        {
-          "type": "StringLiteral",
-          "value": "bar",
-          "raw": "\"bar\""
-        }
-      ]
-    }
+    { "type": "LocalStatement",
+      "variables": [ { "type": "Identifier", "name": "x" } ],
+      "init": [ { "type": "BinaryExpression", "operator": "+",
+                  "left":  { "type": "NumericLiteral", "value": 1, "raw": "1" },
+                  "right": { "type": "NumericLiteral", "value": 2, "raw": "2" } } ] }
   ],
   "comments": []
 }
 ```
 
+Drop the `local` and the same expression becomes an `AssignmentStatement`
+instead, with `variables` and `init` in the same shape.
+
+`luaparse.ast` holds every constructor, so you can rewrite node creation to
+reshape the tree. The `onCreateNode` callback is the supported way to observe it.
+
+## Options
+
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `luaVersion` | `'FiveM5.4'` | `'5.1'` `'5.2'` `'5.3'` `'5.4'` `'5.5'` `'FiveM5.4'` `'LuaJIT'` |
+| `wait` | `false` | Signal end of input yourself, via the returned parser object |
+| `comments` | `true` | Collect comments into `chunk.comments` |
+| `scope` | `false` | Track identifier scopes and `isLocal` |
+| `locations` | `false` | Attach `loc` to each node |
+| `ranges` | `false` | Attach `range` to each node |
+| `extendedIdentifiers` | FiveM only | Allow code points ≥ U+0080 in identifiers |
+| `encodingMode` | `'none'` | `'none'` `'pseudo-latin1'` `'x-user-defined'` |
+| `onCreateNode` | `null` | Called with each completed node |
+| `onCreateScope` | `null` | Called when a scope opens |
+| `onDestroyScope` | `null` | Called when a scope closes |
+| `onLocalDeclaration` | `null` | Called with each declared local identifier |
+
+Defaults are also on `hluaparse.defaultOptions` if you want to change them
+globally.
+
 ### Encoding modes
 
-Unlike strings in JavaScript, Lua strings are not Unicode strings, but
-bytestrings (sequences of 8-bit values); likewise, implementations of Lua
-parse the source code as a sequence of octets. However, the input to this
-parser is a JavaScript string, i.e. a sequence of 16-bit code units (not
-necessarily well-formed UTF-16). This poses a problem of how those code
-units should be interpreted, particularly if they are outside the Basic
-Latin block ('ASCII').
+Lua strings are byte strings, and Lua implementations read source as octets.
+The parser's input is a JavaScript string, so something has to bridge the two.
 
-The `encodingMode` option specifies how these issues should be handled.
-Possible values are as follows:
+- `'none'` — pass everything through untouched. String literals parse to
+  `null`. This is the default.
+- `'pseudo-latin1'` — source decoded as `iso-8859-1`, byte escapes mapped to
+  U+0080–U+00FF. Not the WHATWG `iso-8859-1`, which is `windows-1252`.
+- `'x-user-defined'` — source decoded as WHATWG `x-user-defined`, byte escapes
+  mapped to U+F780–U+F7FF.
 
-- `'none'`: Source code characters all pass through as-is and string
-  literals are not interpreted at all; the string literal nodes contain
-  the value `null`. This is the default mode.
-- `'x-user-defined'`: Source code has been decoded with the WHATWG
-  `x-user-defined` encoding; escapes of bytes in the range \[0x80, 0xff]
-  are mapped to the Unicode range \[U+F780, U+F7FF].
-- `'pseudo-latin1'`: Source code has been decoded with the IANA
-  `iso-8859-1` encoding; escapes of bytes in the range \[0x80, 0xff]
-  are mapped to Unicode range \[U+0080, U+00FF]. Note that this is
-  **not** the same as how WHATWG standards define the `iso-8859-1`
-  encoding, which is to say, as a synonym of `windows-1252`.
+## Lexer
 
-### Custom AST
-
-The default AST structure is somewhat inspired by the Mozilla Parser API but
-can easily be overriden to customize the structure or to inject custom logic.
-
-`luaparse.ast` is an object containing all functions used to create the AST, if
-you for example wanted to trigger an event on node creations you could use the
-following:
+The lexer is usable on its own. Each token carries a `type` (match against
+`hluaparse.tokenTypes`), a `value`, `line`, `lineStart`, and a `range` you can
+use to slice the raw text back out of the source.
 
 ```js
-var luaparse = require('luaparse'),
-    events = new (require('events').EventEmitter);
-
-Object.keys(luaparse.ast).forEach(function(type) {
-  var original = luaparse.ast[type];
-  luaparse.ast[type] = function() {
-    var node = original.apply(null, arguments);
-    events.emit(node.type, node);
-    return node;
-  };
-});
-events.on('Identifier', function(node) { console.log(node); });
-luaparse.parse('i = "foo"');
+const parser = hluaparse.parse('foo = "bar"', { wait: true });
+parser.lex(); // { type: 8,  value: 'foo', line: 1, lineStart: 0, range: [0, 3] }
+parser.lex(); // { type: 32, value: '=',  line: 1, lineStart: 0, range: [4, 5] }
+parser.lex(); // { type: 2,  value: null, line: 1, lineStart: 0, range: [6, 11] }
 ```
 
-_this is only an example to illustrate what is possible and this particular
-example might not suit your needs as the end location of the node has not been
-determined yet. If you desire events you should use the `onCreateNode` callback
-instead)._
+The `StringLiteral` value is `null` under the default `encodingMode: 'none'`,
+because the bytes are never interpreted. Pass `encodingMode: 'pseudo-latin1'`
+and that third token becomes `value: 'bar'`. Use `range` to slice the raw
+source text when you need the bytes exactly as written.
 
-
-### Lexer
-
-The lexer used by luaparse can be used independently of the recursive descent
-parser. The lex function is exposed as `luaparse.lex()` and it will return the
-next token up until `EOF` is reached.
-
-Each token consists of:
-
-- `type` expressed as an enum flag which can be matched with `luaparse.tokenTypes`.
-- `value`
-- `line`, `lineStart`
-- `range` can be used to slice out raw values, eg. `foo = "bar"` will return a
-`StringLiteral` token with the value `bar`. Slicing out the range on the other
-hand will return `"bar"`.
-
-```js
-var parser = luaparse.parse('foo = "bar"', { wait: true });
-parser.lex(); // { type: 8, value: "foo", line: 1, lineStart: 0, range: [0, 3] }
-parser.lex(); // { type: 32, value: "=", line: 1, lineStart: 0, range: [4, 5]}
-parser.lex(); // { type: 2, value: "bar", line: 1, lineStart: 0, range: [6, 11] }
-parser.lex(); // { type: 1, value: "<eof>", line: 1, lineStart: 0, range: [11 11] }
-parser.lex(); // { type: 1, value: "<eof>", line: 1, lineStart: 0, range: [11 11] }
-```
-
-## Examples
-
-Have a look in the [examples directory](https://github.com/fstirlitz/luaparse/tree/master/examples)
-of the repository for some code examples or check them out [live](https://fstirlitz.github.io/luaparse/examples.html).
-
-## luaparse(1)
-
-The `luaparse` executable can be used in your shell by installing `luaparse` globally using npm:
+## Command line
 
 ```bash
-$ npm install -g luaparse
-$ luaparse --help
-
-Usage: luaparse [option]... [file|code]...
-
-Options:
-  -c|--code [code]   parse code snippet
-  -f|--file [file]   parse from file
-  -b|--beautify      output an indenteted AST
-  --[no]-comments    store comments. defaults to true
-  --[no]-scope       store variable scope. defaults to false
-  --[no]-locations   store location data on syntax nodes. defaults to false
-  --[no]-ranges      store start and end character locations. defaults to false
-  -q|--quiet         suppress output
-  -h|--help
-  -v|--version
-  --verbose
-
-Examples:
-  luaparse --no-comments -c "locale foo = \"bar\""
-  luaparse foo.lua bar.lua
-```
-
-Example usage
-
-```bash
-$ luaparse "i = 0"
-
+$ node bin/luaparse "i = 0"
+{"type":"Chunk","body":[],"comments":[]}
 {"type":"Chunk","body":[{"type":"AssignmentStatement","variables":[{"type":"Identifier","name":"i"}],"init":[{"type":"NumericLiteral","value":0,"raw":"0"}]}],"comments":[]}
 ```
 
-## Support
+One JSON line per input, so that is two: the empty first line is the implicit
+end-of-input marker, and the second is the parse result.
 
-Has been tested in at least IE6+, Firefox 3+, Safari 4+, Chrome 10+, Opera 10+,
-Node 0.4.0+, RingoJS 0.8-0.9, Rhino 1.7R4-1.7R5, Nashorn 1.8.0.
+`-c/--code` for a snippet, `-f/--file` for a file, `-b/--beautify` to indent the
+output, `-q/--quiet` to suppress it.
 
-## Quality Assurance
+## Correctness
 
-_TL;DR simply run `make qa`. This will run all quality assurance scripts but
-assumes you have it set up correctly._
+The suite is **3,156 assertions** and CI enforces **100% statement, branch,
+function and line coverage**. Every run is also validated as well-formed TAP,
+and a run that produces no TAP at all is treated as a failure rather than a
+pass — an engine that crashes on load cannot report success.
 
-Begin by cloning the repository and installing the development dependencies
-with `npm install`.
+Tests run on 16 engine configurations:
 
-The luaparse test suite uses [testem](https://github.com/airportyh/testem) as a
-test runner, and because of this it's very easy to run the tests using
-different javascript engines or even on locally installed browsers.
+| Engine | Versions |
+| --- | --- |
+| Node.js | 20, 22, 24 |
+| Bun | 1.3.13, latest |
+| Rhino | 1.7.15, 1.9.1 |
+| RingoJS | 4.0.0 |
+| Duktape | 2.4.0, 2.5.0, 2.6.0, 2.7.0 |
+| QuickJS | 2020-09-06, 2025-04-26, 2025-09-13, 2026-06-04 |
 
-### Test runners
+Node 20 is the oldest supported Node line; earlier ones are all end-of-life and
+no longer tested. The oldest Duktape and QuickJS builds are kept deliberately —
+they are the floor for the embedded engines this parser is most often dropped
+into.
 
-- `make test` uses node.
-- `make testem-engines` uses node, ringo and rhino
-1.7R5. This requires that you have the engines installed.
-- `make test-node` uses a custom command line reporter to make the output
-easier on the eyes while practicing TDD.
-- By installing `testem` globally you can also run the tests in a locally
-installed browser.
+Beyond its own suite, releases are checked differentially against real Lua
+compilers: a corpus of 548 constructs is parsed by both `hluaparse` and `luac`,
+and any disagreement on accept-or-reject is a bug. That process is how the Lua
+5.1 hex-float bug was found — `0xA.8p0` was accepted under 5.1, where real
+`luac 5.1.5` rejects it.
 
-### Other quality assurance measures
+Lua 5.5 is a draft. No official compiler exists to diff against, so it is
+verified against the 5.5 manual only.
 
-- You can check the function complexity using [complexity-report](https://github.com/philbooth/complexityReport.js)
-using `make complexity-analysis`
-- Running `make coverage` will generate the [coverage report](https://fstirlitz.github.io/luaparse/coverage.html).
-To simply check that all code has coverage you can run `make coverage-analysis`.
-- `make lint`, `make benchmark`, `make profile`.
+## Development
 
-### Documentation
+```bash
+npm install
+make qa
+```
 
-By running `make docs` all [documentation](https://fstirlitz.github.io/luaparse/)
-will be generated.
+`make qa` runs the tests, the linter, complexity analysis and the coverage gate.
+On Windows, invoke each target's command through `bash` — `make` drives
+`cmd.exe`, which cannot run the extensionless scripts in `node_modules/.bin`.
 
-## Projects using/extending luaparse
+Coverage reports are published with each run and land on the project's
+`gh-pages` branch.
 
-- [luamin](http://mths.be/luamin), a Lua minifier written by Mathias Bynens.
-- [Ace](https://github.com/ajaxorg/ace), an online code editor.
+## Differences from upstream luaparse
 
-## Acknowledgements
+Originally written by Oskar Schöldström for his bachelor's thesis at Arcada,
+and maintained here with FiveM support, Lua 5.5, and the coverage and
+differential work described above.
 
-* Initial tests are scaffolded from [yueliang][yueliang] and then manually checked for error.
-* Much of the code is based on [LuaMinify][luaminify], the [Lua][lua] source and [Esprima][esprima]. All awesome projects.
+- Lua 5.5: `global` declarations, named varargs, and `local` attributes
+  everywhere they apply.
+- `FiveM5.4`: safe navigation, compound assignment, extended identifiers.
+- Hex float fractions are correctly rejected on 5.1, where upstream accepts them.
+- Unreachable code paths were removed rather than excluded from coverage.
+
+If you depend on strict upstream behaviour, note that `FiveM5.4` is the
+default here. Pass an explicit `luaVersion` to pin behaviour.
+
+## Credits
+
+Much of the original code derives from [LuaMinify][luaminify], the [Lua][lua]
+source, and [Esprima][esprima].
 
 ## License
 
 MIT
 
 [luaminify]: https://github.com/stravant/LuaMinify
-[yueliang]: http://yueliang.luaforge.net/
 [lua]: https://www.lua.org
-[esprima]: http://esprima.org
-[wtf8]: https://simonsapin.github.io/wtf-8/
+[esprima]: https://esprima.org
