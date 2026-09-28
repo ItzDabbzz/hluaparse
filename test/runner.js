@@ -153,6 +153,7 @@
       , './spec/encoding'
       , './spec/encodingxuserdefined'
       , './spec/edgenl'
+      , './spec/edgeunarystatement'
       , './spec/edgenlcs'
       , './spec/edgenllc'
       , './spec/edgenlls'

@@ -1,0 +1,14 @@
+// { "luaVersion": "5.1" }
+#t
+#t.x
+#t[1]
+#t()
+#
+#;
+#t
+-1                                        -- FAIL
+not t                                     -- FAIL
+~t                                        -- FAIL
+1                                         -- FAIL
+a +                                       -- FAIL
+a =                                       -- FAIL

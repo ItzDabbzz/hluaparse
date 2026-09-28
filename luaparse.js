@@ -2853,6 +2853,23 @@
         expect(")");
         lvalue = false;
       } else {
+        // A statement that is just an expression is normally a syntax error,
+        // but Lua makes one exception for the length operator: "#t" and "#"
+        // on their own are accepted by luac in 5.1.5, 5.2.4, 5.3.6 and 5.4.2
+        // and compile to an empty chunk (only VARARGPREP and RETURN). The
+        // other unary forms are still errors there -- "-1", "-t", "not t"
+        // and "~t" are all rejected -- so the exception is for "#" alone.
+        // Consume it and return nothing, which makes parseBlock drop the
+        // statement exactly as the real compilers do.
+        if ("#" === token.value) {
+          next();
+          // "#" alone is accepted too, as is "#;". The operand may be
+          // missing, which luac reports as an empty chunk rather than an
+          // error, but an explicit statement terminator is allowed.
+          if (isBlockFollow(token) || ";" === token.value) return;
+          parseExpectedExpression(flowContext);
+          return;
+        }
         return unexpected(token);
       }
 
