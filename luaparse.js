@@ -149,6 +149,9 @@
         highMask | 0x80 | (codepoint & 0x3f)
       );
     } else if (codepoint < 0x4000000) {
+      /* istanbul ignore next: 5- and 6-byte UTF-8. readUnicodeEscapeSequence
+         rejects any codepoint above 0x10FFFF with "UTF-8 value too large"
+         before this is reached, so these branches cannot be exercised. */
       return String.fromCharCode(
         highMask | 0xf8 | (codepoint >> 24),
         highMask | 0x80 | ((codepoint >> 18) & 0x3f),

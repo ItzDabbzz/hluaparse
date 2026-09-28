@@ -1,0 +1,17 @@
+// { "luaVersion": "FiveM5.4", "compoundOperators": true, "setConstructors": true }
+a += 1
+a -= 1
+a *= 2
+a /= 2
+a ^= 2
+a <<= 1
+a >>= 1
+a, b += 1, 2
+local x in y
+local a, b in c
+local x <const> in y
+t = {.x}
+t = {.x, 1}
+t = {.a.b}
+t = {.x, .y}
+t = {[1] = 1, .z, x = 2}

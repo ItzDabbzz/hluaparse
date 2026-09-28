@@ -72,6 +72,7 @@
       , './spec/encodingxuserdefined'
       , './spec/escapesequences'
       , './spec/expressions'
+      , './spec/fivmextensions'
       , './spec/for'
       , './spec/functioncalls'
       , './spec/functions'
@@ -259,7 +260,13 @@
           visitKey('key');
           /* fall through */
         case 'TableValue':
+        case 'TableSetValue':
           visitKey('value');
+          break;
+        case 'LocalOperatorStatement':
+        case 'CompoundAssignmentStatement':
+          visitKey('variables');
+          visitKey('init');
           break;
         case 'CallExpression':
           visitKey('base');
