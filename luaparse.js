@@ -58,8 +58,12 @@
   // in a browser or Rhino
   else {
     factory((root[name] = {}));
+    // Backwards compatibility: this library was published as
+    // `fivem-luaparse` before the rename to `hluaparse`. Keep the old global
+    // pointing at the same object so existing <script> users do not break.
+    if (name !== "fivem-luaparse") root["fivem-luaparse"] = root[name];
   }
-})(this, "fivem-luaparse", function (exports) {
+})(this, "hluaparse", function (exports) {
   "use strict";
 
   exports.version = "1.0.3";
@@ -111,6 +115,10 @@
     // and false for 5.1, where `continue` is an ordinary identifier. Set this to
     // override the default for any version.
     continueKeyword: undefined,
+    // Whether `global` is a reserved word. It became reserved in Lua 5.5; in
+    // every earlier version it is an ordinary identifier. Set this to override
+    // the default for any version.
+    globalKeyword: undefined,
     // Encoding mode: how to interpret code units higher than U+007F in input
     encodingMode: "none",
     // Debug Mode: Outputs a log of all current inner workings
@@ -477,6 +485,41 @@
         type: "IdentifierWithAttribute",
         name: name,
         attribute: attribute,
+      };
+    },
+
+    // Lua 5.5: a variable introduced by a `global` declaration.
+    globalIdentifier: function (name, attribute) {
+      return {
+        type: "GlobalIdentifier",
+        name: name,
+        attribute: attribute || null,
+      };
+    },
+
+    // Lua 5.5: `global attnamelist ['=' explist]`
+    globalStatement: function (variables, init) {
+      return {
+        type: "GlobalStatement",
+        variables: variables,
+        init: init,
+      };
+    },
+
+    // Lua 5.5: `global [attrib] '*'`
+    globalWildcardStatement: function (attribute) {
+      return {
+        type: "GlobalWildcardStatement",
+        attribute: attribute || null,
+      };
+    },
+
+    // Lua 5.5: `varargparam ::= '...' [Name]` -- a vararg that names the
+    // local it is bound to.
+    varargWithName: function (name) {
+      return {
+        type: "VarargWithName",
+        name: name,
       };
     },
 
@@ -917,6 +960,7 @@
 
       case features.safeNavigation && 63: // ?
         if (46 === next) return scanPunctuator("?.");
+        /* falls through */
 
       case 61: // =
         if (61 === next) return scanPunctuator("==");
@@ -963,10 +1007,12 @@
             if (47 === next) return scanPunctuator("//");
           return scanPunctuator("/");
         }
+        /* falls through */
 
       case 38:
       case 124: // & |
         if (!features.bitwiseOperators) break;
+        /* falls through */
 
       case 42: // *
       case 94: // ^
@@ -1812,12 +1858,21 @@
           "break" === id || "local" === id || "until" === id || "while" === id
         );
       case 6:
-        return "elseif" === id || "repeat" === id || "return" === id;
+        if ("elseif" === id || "repeat" === id || "return" === id) return true;
+        return isVersionGatedKeyword(id);
       case 8:
-        // `continue` is a keyword from Lua 5.2 onwards. In 5.1 it stays a
-        // perfectly good identifier, so it must not be reserved there.
-        return "function" === id || (features.continueKeyword && "continue" === id);
+        return "function" === id || isVersionGatedKeyword(id);
     }
+    return false;
+  }
+
+  // Keywords that are only reserved in some language versions:
+  // `continue` from 5.2 onwards, and `global` from 5.5 onwards. In earlier
+  // versions they are ordinary identifiers, so they must not be reserved
+  // there. Split out to keep isKeyword() under the complexity threshold.
+  function isVersionGatedKeyword(id) {
+    if ("continue" === id) return !!features.continueKeyword;
+    if ("global" === id) return !!features.globalKeyword;
     return false;
   }
 
@@ -2216,6 +2271,14 @@
         case "local":
           next();
           return parseLocalStatement(flowContext);
+        case "global":
+          // Lua 5.5 only; in earlier versions `global` is an ordinary
+          // identifier and never reaches this switch.
+          if (features.globalDeclarations) {
+            next();
+            return parseGlobalStatement(flowContext);
+          }
+          break;
         case "if":
           next();
           return parseIfStatement(flowContext);
@@ -2519,14 +2582,32 @@
   function parseLocalStatement(flowContext) {
     var name,
       attribute,
+      leadingAttribute,
       marker,
       declToken = previousToken;
-    if (Identifier === token.type) {
+    // Lua 5.5 allows an attribute before the name as well as after it:
+    // `attnamelist ::= [attrib] Name [attrib] {',' [attrib] Name [attrib]}`.
+    var hasLeadingAttributeSlot =
+      features.leadingAttributes &&
+      features.attributes &&
+      Punctuator === token.type &&
+      token.value === "<";
+    if (Identifier === token.type || hasLeadingAttributeSlot) {
       var variables = [],
         init = [];
 
       do {
         if (trackLocations) marker = createLocationMarker();
+
+        leadingAttribute = null;
+        if (
+          features.leadingAttributes &&
+          features.attributes &&
+          Punctuator === token.type &&
+          token.value === "<"
+        ) {
+          leadingAttribute = parseAttribute();
+        }
 
         name = parseIdentifier();
         attribute = null;
@@ -2538,6 +2619,11 @@
           if (trackLocations) pushLocation(marker);
           variables.push(
             finishNode(ast.identifierWithAttribute(name, attribute))
+          );
+        } else if (leadingAttribute !== null) {
+          if (trackLocations) pushLocation(marker);
+          variables.push(
+            finishNode(ast.identifierWithAttribute(name, leadingAttribute))
           );
         } else {
           variables.push(name);
@@ -2591,6 +2677,97 @@
     } else {
       raiseUnexpectedToken("<name>", token);
     }
+  }
+
+  //     global ::= 'global' 'function' Name funcdecl
+  //        | 'global' attnamelist ['=' explist]
+  //        | 'global' [attrib] '*'
+  //
+  // Lua 5.5. `global x, y = 1, 2` declares globals explicitly; the `*` form
+  // declares every name that is not otherwise declared local.
+  function parseGlobalStatement(flowContext) {
+    var name,
+      attribute,
+      leadingAttribute,
+      marker,
+      declToken = previousToken;
+
+    // global [attrib] '*'
+    leadingAttribute = null;
+    if (features.attributes && Punctuator === token.type && token.value === "<") {
+      leadingAttribute = parseAttribute();
+    }
+    if (leadingAttribute !== null && consume("*")) {
+      return finishNode(ast.globalWildcardStatement(leadingAttribute));
+    }
+    if (leadingAttribute === null && consume("*")) {
+      return finishNode(ast.globalWildcardStatement(null));
+    }
+
+    // `global` may also open with a leading attribute, as in
+    // `global <const> x` and `global <const> *`. An attribute already parsed
+    // above belongs to the first name unless `*` consumed it.
+    var hasLeadingAttributeSlot =
+      leadingAttribute !== null ||
+      (features.leadingAttributes &&
+        features.attributes &&
+        Punctuator === token.type &&
+        token.value === "<");
+
+    // global function Name funcdecl
+    if (!hasLeadingAttributeSlot && Keyword === token.type) {
+      if (consume("function")) {
+        name = parseIdentifier();
+        if (options.scope) scopeIdentifier(name);
+        return parseFunctionDeclaration(name);
+      }
+    }
+
+    if (Identifier !== token.type && !hasLeadingAttributeSlot)
+      raiseUnexpectedToken("<name>", token);
+
+    var variables = [],
+      init = [];
+
+    // The attribute captured before the `*` check above, if any, belongs to
+    // the first name in this list.
+    var pendingAttribute = leadingAttribute;
+
+    do {
+      if (trackLocations) marker = createLocationMarker();
+
+      leadingAttribute = pendingAttribute;
+      pendingAttribute = null;
+      if (
+        leadingAttribute === null &&
+        features.leadingAttributes &&
+        features.attributes &&
+        Punctuator === token.type &&
+        token.value === "<"
+      ) {
+        leadingAttribute = parseAttribute();
+      }
+
+      name = parseIdentifier();
+      attribute = null;
+      if (features.attributes) attribute = parseAttribute();
+
+      if (trackLocations) pushLocation(marker);
+      variables.push(
+        finishNode(ast.globalIdentifier(name, attribute || leadingAttribute))
+      );
+    } while (consume(","));
+
+    if (consume("=")) {
+      do {
+        var expression = parseExpectedExpression(flowContext);
+        init.push(expression);
+      } while (consume(","));
+    }
+
+    // A `global` declaration does not create a local binding, so nothing is
+    // added to the flow context or the scope chain here.
+    return finishNode(ast.globalStatement(variables, init));
   }
 
   //     assignment ::= varlist '=' explist
@@ -2686,7 +2863,7 @@
 
     pushLocation(startMarker);
     return finishNode(
-      compoundOperator != undefined
+      compoundOperator !== undefined
         ? ast.compoundAssignmentStatement(compoundOperator, targets, values)
         : ast.assignmentStatement(targets, values)
     );
@@ -2700,6 +2877,18 @@
     markLocation();
     var identifier = token.value;
     if (Identifier !== token.type) raiseUnexpectedToken("<name>", token);
+    next();
+    return finishNode(ast.identifier(identifier));
+  }
+
+  // A Name in a position that accepts a reserved word. Lua's grammar allows
+  // keywords as the field name after `.`, `:` and `?.` (`t.end` is legal in
+  // every version), but nowhere else.
+  function parseFieldName() {
+    markLocation();
+    var identifier = token.value;
+    if (Identifier !== token.type && Keyword !== token.type)
+      raiseUnexpectedToken("<name>", token);
     next();
     return finishNode(ast.identifier(identifier));
   }
@@ -2754,6 +2943,24 @@
         else if (VarargLiteral === token.type) {
           flowContext.allowVararg = true;
           parameters.push(parsePrimaryExpression(flowContext));
+          // Lua 5.5: `varargparam ::= '...' [Name]` -- the vararg may name the
+          // local it is bound to. parseIdentifier() has already finished the
+          // name node and popped its own location, so bless the wrapper with
+          // the name's range rather than pushing a fresh marker.
+          if (features.namedVarargs && Identifier === token.type) {
+            var varargName = parseIdentifier();
+            if (options.scope) scopeIdentifier(varargName);
+            var varargNode = ast.varargWithName(varargName);
+            // parseIdentifier() already finished the name node, so the marker
+            // it pushed has been popped. Carry the name's location across.
+            // Only assign when the corresponding option actually produced one,
+            // otherwise a `loc: undefined` key is created and deepEqual against
+            // the spec (which has no such key) fails.
+            if (varargName.loc) varargNode.loc = varargName.loc;
+            if (varargName.range) varargNode.range = varargName.range;
+            if (options.onCreateNode) options.onCreateNode(varargNode);
+            parameters.push(varargNode);
+          }
         } else {
           raiseUnexpectedToken("<name> or '...'", token);
         }
@@ -3026,17 +3233,17 @@
         case ".":
           pushLocation(marker);
           next();
-          identifier = parseIdentifier();
+          identifier = parseFieldName();
           return finishNode(ast.memberExpression(base, ".", identifier));
         case features.safeNavigation && "?.":
           pushLocation(marker);
           next();
-          identifier = parseIdentifier();
+          identifier = parseFieldName();
           return finishNode(ast.memberExpression(base, "?.", identifier));
         case ":":
           pushLocation(marker);
           next();
-          identifier = parseIdentifier();
+          identifier = parseFieldName();
           base = finishNode(ast.memberExpression(base, ":", identifier));
           // Once a : is found, this has to be a CallExpression, otherwise
           // throw an error.
@@ -3223,6 +3430,28 @@
       attributes: { const: true, close: true },
       relaxedUTF8: true,
     },
+    5.5: {
+      continueKeyword: true,
+      labels: true,
+      emptyStatement: true,
+      hexEscapes: true,
+      skipWhitespaceEscape: true,
+      strictEscapes: true,
+      unicodeEscapes: true,
+      bitwiseOperators: true,
+      integerDivision: true,
+      relaxedBreak: true,
+      noLabelShadowing: true,
+      attributes: { const: true, close: true },
+      relaxedUTF8: true,
+      // Lua 5.5 additions. `global` became a reserved word (manual 3.1), and
+      // `global` declarations, leading attributes and named varargs were
+      // added (manual 9, complete syntax).
+      globalKeyword: true,
+      globalDeclarations: true,
+      leadingAttributes: true,
+      namedVarargs: true,
+    },
     "FiveM5.4": {
       continueKeyword: true,
       labels: true,
@@ -3303,6 +3532,9 @@
     // off for any version, the same way `extendedIdentifiers` is configurable.
     if (options.continueKeyword !== void 0)
       features.continueKeyword = !!options.continueKeyword;
+    // Likewise for `global`, which only became reserved in Lua 5.5.
+    if (options.globalKeyword !== void 0)
+      features.globalKeyword = !!options.globalKeyword;
 
     if (
       !Object.prototype.hasOwnProperty.call(encodingModes, options.encodingMode)
@@ -3357,7 +3589,7 @@
     /* istanbul ignore if */
     if (locations.length > 0)
       throw new Error(
-        "Location tracking failed. This is most likely a bug in fivem-luaparse"
+        "Location tracking failed. This is most likely a bug in hluaparse"
       );
 
     return chunk;

@@ -20,6 +20,37 @@ export type BreakStatement = Base<"BreakStatement">;
 
 export type ContinueStatement = Base<"ContinueStatement">;
 
+/** Lua 5.5: `global attnamelist ['=' explist]` */
+export interface GlobalStatement extends Base<"GlobalStatement"> {
+    variables: GlobalIdentifier[];
+    init: Expression[];
+}
+
+/** Lua 5.5: `global [attrib] '*'` */
+export interface GlobalWildcardStatement extends Base<"GlobalWildcardStatement"> {
+    attribute: Attribute | null;
+}
+
+/** Lua 5.5: a variable introduced by a `global` declaration. */
+export interface GlobalIdentifier extends Base<"GlobalIdentifier"> {
+    name: Identifier;
+    attribute: Attribute | null;
+}
+
+/** Lua 5.5: `varargparam ::= '...' [Name]`. */
+export interface VarargWithName extends Base<"VarargWithName"> {
+    name: Identifier;
+}
+
+export interface Attribute extends Base<"Attribute"> {
+    name: string;
+}
+
+export interface IdentifierWithAttribute extends Base<"IdentifierWithAttribute"> {
+    name: Identifier;
+    attribute: Attribute;
+}
+
 export interface GotoStatement extends Base<"GotoStatement"> {
     label: Identifier;
 }
@@ -77,7 +108,7 @@ export interface CallStatement extends Base<"CallStatement"> {
 export interface FunctionDeclaration extends Base<"FunctionDeclaration"> {
     identifier: Identifier | MemberExpression | null;
     isLocal: boolean;
-    parameters: Array<Identifier | VarargLiteral>;
+    parameters: Array<Identifier | VarargLiteral | VarargWithName>;
     body: Statement[];
 }
 
@@ -236,6 +267,8 @@ export type Statement =
     | LabelStatement
     | BreakStatement
     | ContinueStatement
+    | GlobalStatement
+    | GlobalWildcardStatement
     | GotoStatement
     | ReturnStatement
     | IfStatement
