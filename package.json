@@ -1,17 +1,21 @@
 {
-  "name": "luaparse-fivem-dev",
+  "name": "hluaparse",
   "version": "0.3.3",
-  "description": "A Lua parser in JavaScript - Fixed by ItzDabbzz -  Modified by Sh4dow#8080",
+  "description": "A Lua parser in JavaScript - maintained by ItzDabbzz for Homestead Systems. Originally by Oskar Schöldström, with FiveM Lua support.",
   "keywords": [
     "ast",
     "lua",
     "parser",
-    "parsing"
+    "parsing",
+    "luaparse",
+    "hluaparse",
+    "homestead",
+    "fivem"
   ],
-  "homepage": "https://fstirlitz.github.io/luaparse/",
-  "bugs": "https://github.com/ItzDabbzz/luaparse/issues",
+  "homepage": "https://github.com/ItzDabbzz/hluaparse#readme",
+  "bugs": "https://github.com/ItzDabbzz/hluaparse/issues",
   "license": "MIT",
-  "author": "Oskar Schöldström <public@oxy.fi> (http://www.oxy.fi/) |  Modified by Sh4dow#8080 | Fixed By ItzDabbzz",
+  "author": "Oskar Schöldström <public@oxy.fi> (http://www.oxy.fi/) (original author)",
   "files": [
     "README.md",
     "LICENSE",
@@ -28,7 +32,7 @@
   "man": "./docs/luaparse.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ItzDabbzz/luaparse.git"
+    "url": "https://github.com/ItzDabbzz/hluaparse.git"
   },
   "scripts": {
     "test": "make qa",
@@ -51,5 +55,17 @@
     "testem": "^3.6.0",
     "through2": "^4.0.2",
     "typescript": "^5.7.3"
+  },
+  "contributors": [
+    "Sh4dow#8080",
+    "ItzDabbzz"
+  ],
+  "maintainers": [
+    "ItzDabbzz <dabz@homestead.systems> (https://github.com/ItzDabbzz)"
+  ],
+  "overrides": {
+    "complexity-report": {
+      "esprima": "^4.0.1"
+    }
   }
 }

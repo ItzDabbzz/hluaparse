@@ -30,13 +30,19 @@ interface ParseOptions {
      * The identifier will be passed as the only parameter.
      */
     onLocalDeclaration: null | ((name: string) => void);
-    luaVersion: "5.1" | "5.2" | "5.3" | "5.4" | "FiveM5.4" | "LuaJIT";
+    luaVersion: "5.1" | "5.2" | "5.3" | "5.4" | "5.5" | "FiveM5.4" | "LuaJIT";
     /**
      * Whether `continue` is a keyword. Defaults to true for Lua 5.2 and newer,
      * and false for 5.1, where `continue` is an ordinary identifier. Set this to
      * override the default for any version.
      */
     continueKeyword?: boolean;
+    /**
+     * Whether `global` is a reserved word. Defaults to true for Lua 5.5, and
+     * false for earlier versions, where `global` is an ordinary identifier.
+     * Set this to override the default for any version.
+     */
+    globalKeyword?: boolean;
     /**
      * Whether to allow code points ≥ U+0080 in identifiers, like LuaJIT does.
      * See 'Note on character encodings' below if you wish to use this option.
@@ -105,6 +111,14 @@ export interface Parser {
     lex(): Token;
 }
 
+declare module "hluaparse" {
+    export const version: string;
+    export const tokenTypes: TokenTypes;
+    export const errors: Errors;
+
+}
+
+/** @deprecated Renamed to `hluaparse`. Kept so existing imports keep resolving. */
 declare module "luaparse-fivem" {
     export const version: string;
     export const tokenTypes: TokenTypes;
