@@ -1,30 +1,50 @@
-name: Upload release
+name: Release
 
 on:
   release:
     types: [published]
 
+# Least privilege: the default token can read the repo, but publishing with
+# provenance attestation additionally needs an id-token.
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
-  build:
+  verify:
+    name: Verify
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 12
+          node-version: 20.x
       - run: npm ci
-      - run: npm test
+      # Mirrors the CI Lint job so a release can never ship past a red gate.
+      - run: make lint complexity-analysis
+      - run: node test/runner.js | .github/tap_check.bash
 
   publish-npm:
-    needs: build
+    name: Publish to npm
+    needs: verify
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 12
+          node-version: 20.x
           registry-url: https://registry.npmjs.org/
       - run: npm ci
-      - run: npm publish
+      # The version in package.json must match the git tag, otherwise the
+      # release publishes a number that does not correspond to the tag.
+      - name: Verify version matches tag
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          if [ "$PKG_VERSION" != "$TAG_VERSION" ]; then
+            echo "package.json is $PKG_VERSION but the tag is $TAG_VERSION"
+            exit 1
+          fi
+      - run: npm publish --provenance --access public
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
