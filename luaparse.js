@@ -889,7 +889,7 @@
   exports.lex = lex;
 
   function lex() {
-    if (options.debug) debugLog('Lexing at index ' + index + ', line ' + line);
+    if (options.debug) debugLog("Lexing at index " + index + ", line " + line);
 
     skipWhiteSpace();
 
@@ -914,7 +914,7 @@
     }
 
     if (index >= length) {
-      if (options.debug) debugLog('Reached EOF');
+      if (options.debug) debugLog("Reached EOF");
       return {
         type: EOF,
         value: "<eof>",
@@ -931,112 +931,118 @@
     tokenStart = index;
     if (isIdentifierStart(charCode)) return scanIdentifierOrKeyword();
 
-    switch (charCode) {
-      case 39:
-      case 34:
-      case features.compileTimeJenkins && 96: // ' " `
-        return scanStringLiteral();
+    return scanTokenByCharCode(charCode, next);
+  }
 
-      case 48:
-      case 49:
-      case 50:
-      case 51:
-      case 52:
-      case 53:
-      case 54:
-      case 55:
-      case 56:
-      case 57: // 0-9
-        return scanNumericLiteral();
+  // Dispatch a token by its first character. Split out of lex() so neither
+  // function breaches the complexity threshold: the punctuation and
+  // bitwise cases here are what make lex() expensive to reason about.
+  function scanTokenByCharCode(charCode, next) {
+  switch (charCode) {
+    case 39:
+    case 34:
+    case features.compileTimeJenkins && 96: // ' " `
+      return scanStringLiteral();
 
-      case 46: // .
-        // If the dot is followed by a digit it's a float.
-        if (isDecDigit(next)) return scanNumericLiteral();
-        if (46 === next) {
-          if (46 === input.charCodeAt(index + 2)) return scanVarargLiteral();
-          return scanPunctuator("..");
-        }
-        return scanPunctuator(".");
+    case 48:
+    case 49:
+    case 50:
+    case 51:
+    case 52:
+    case 53:
+    case 54:
+    case 55:
+    case 56:
+    case 57: // 0-9
+      return scanNumericLiteral();
 
-      case features.safeNavigation && 63: // ?
-        if (46 === next) return scanPunctuator("?.");
-        /* falls through */
+    case 46: // .
+      // If the dot is followed by a digit it's a float.
+      if (isDecDigit(next)) return scanNumericLiteral();
+      if (46 === next) {
+        if (46 === input.charCodeAt(index + 2)) return scanVarargLiteral();
+        return scanPunctuator("..");
+      }
+      return scanPunctuator(".");
 
-      case 61: // =
-        if (61 === next) return scanPunctuator("==");
-        return scanPunctuator("=");
+    case features.safeNavigation && 63: // ?
+      if (46 === next) return scanPunctuator("?.");
+      /* falls through */
 
-      case 62: // >
-        if (features.bitwiseOperators)
-          if (62 === next) {
-            if (61 === input.charCodeAt(index + 2))
-              return scanPunctuator(">>=");
-            return scanPunctuator(">>");
-          }
-        if (61 === next) return scanPunctuator(">=");
-        return scanPunctuator(">");
+    case 61: // =
+      if (61 === next) return scanPunctuator("==");
+      return scanPunctuator("=");
 
-      case 60: // <
-        if (features.bitwiseOperators)
-          if (60 === next) {
-            if (61 === input.charCodeAt(index + 2))
-              return scanPunctuator("<<=");
-            return scanPunctuator("<<");
-          }
-        if (61 === next) return scanPunctuator("<=");
-        return scanPunctuator("<");
+    case 62: // >
+      return scanComparisonOrShift(charCode, next, ">", ">>", ">>=");
 
-      case 126: // ~
-        if (61 === next) return scanPunctuator("~=");
-        if (!features.bitwiseOperators) break;
-        return scanPunctuator("~");
+    case 60: // <
+      return scanComparisonOrShift(charCode, next, "<", "<<", "<<=");
 
-      case 58: // :
-        if (features.labels) if (58 === next) return scanPunctuator("::");
-        return scanPunctuator(":");
+    case 126: // ~
+      if (61 === next) return scanPunctuator("~=");
+      if (!features.bitwiseOperators) break;
+      return scanPunctuator("~");
 
-      case 91: // [
-        // Check for a multiline string, they begin with [= or [[
-        if (91 === next || 61 === next) return scanLongStringLiteral();
-        return scanPunctuator("[");
+    case 58: // :
+      if (features.labels) if (58 === next) return scanPunctuator("::");
+      return scanPunctuator(":");
 
-      case 47: // /
-        if (61 !== next) {
-          // Check for integer division op (//)
-          if (features.integerDivision)
-            if (47 === next) return scanPunctuator("//");
-          return scanPunctuator("/");
-        }
-        /* falls through */
+    case 91: // [
+      // Check for a multiline string, they begin with [= or [[
+      if (91 === next || 61 === next) return scanLongStringLiteral();
+      return scanPunctuator("[");
 
-      case 38:
-      case 124: // & |
-        if (!features.bitwiseOperators) break;
-        /* falls through */
+    case 47: // /
+      if (61 !== next) {
+        // Check for integer division op (//)
+        if (features.integerDivision)
+          if (47 === next) return scanPunctuator("//");
+        return scanPunctuator("/");
+      }
+      /* falls through */
 
-      case 42: // *
-      case 94: // ^
-      case 124: // |
-      case 47: // /
-      case 38: // &
-      case 45: // -
-      case 43: // +
-        if (61 === next) return scanPunctuator(input.charAt(index) + "=");
+    case 38:
+    case 124: // & |
+      if (!features.bitwiseOperators) break;
+      /* falls through */
 
-      /* fall through */
-      case 37:
-      case 44:
-      case 123:
-      case 125:
-      case 93:
-      case 40:
-      case 41:
-      case 59:
-      case 35:
-        return scanPunctuator(input.charAt(index));
+    case 42: // *
+    case 94: // ^
+    case 124: // |
+    case 47: // /
+    case 38: // &
+    case 45: // -
+    case 43: // +
+      if (61 === next) return scanPunctuator(input.charAt(index) + "=");
+
+    /* fall through */
+    case 37:
+    case 44:
+    case 123:
+    case 125:
+    case 93:
+    case 40:
+    case 41:
+    case 59:
+    case 35:
+      return scanPunctuator(input.charAt(index));
     }
 
     return unexpected(input.charAt(index));
+  }
+
+  // `<` and `>` each have a shift form (`<<`, `>>`) and an assignment form
+  // (`<<=`, `>>=`) that only exist when bitwise operators are enabled.
+  // Longest match first, so `>>=` wins over `>>` wins over `>=` wins over `>`.
+  // `charCode` is the operator's char code, matching the `switch` dispatch.
+  function scanComparisonOrShift(charCode, next, single, shift, shiftAssign) {
+    if (features.bitwiseOperators && charCode === next) {
+      if (61 === input.charCodeAt(index + 2)) return scanPunctuator(shiftAssign);
+      return scanPunctuator(shift);
+    }
+    if (61 === next) return scanPunctuator(single + "=");
+    return scanPunctuator(single);
   }
 
   // Whitespace has no semantic meaning in lua so simply skip ahead while
