@@ -1,9 +1,15 @@
-/*global require, define, exports, load, console, print, module, emit, process, __loadScript */
+/*global require, define, exports, load, console, print, module, emit, process, __loadScript, __dirname, LUAPARSE_ENTRY */
 (function (root) {
   var isLoader = typeof define === 'function' && !!define.amd
     , isModule = typeof require === 'function' && typeof exports === 'object' && exports && !isLoader
     , isBrowser = 'window' in root && root.window === root && typeof root.navigator !== 'undefined'
     , isEngine = !isBrowser && !isModule && typeof root.load === 'function'
+    // A real Node host. The six UMD assertions below need fs, vm and
+    // process, and `require` alone does not identify one: RingoJS has a
+    // require() shim but no fs, no vm and no process, and taking that
+    // branch there killed the run. Used by both the block and its count.
+    , isNodeLike = typeof process === 'object' && typeof require === 'function' && !!process.versions && !!process.versions.node
+    , nodeHost = isNodeLike
     , isTestem = isBrowser && root.location.hash === '#testem'
     // Use the console reporter
     , isConsole = typeof process === 'object' && process.argv && process.argv.indexOf('--console') >= 0;
@@ -56,9 +62,84 @@
     }
   };
 
+  // The library is resolved after the loader is defined, because on
+  // script-loading engines it has to be evaluated first and then looked up
+  // under its exported global name.
+  //
+  // LUAPARSE_ENTRY points the suite at a different build of the same parser.
+  // The ES5-only engines in the CI matrix cannot parse the ES6 source, so
+  // they are run against dist/luaparse.es5.js instead. It is generated from
+  // luaparse.js by scripts/build-es5 and is behaviourally identical.
+  //
+  // Resolve against this file's directory rather than the process cwd: under
+  // Node the engine is launched as `node test/runner.js` from the repository
+  // root, so a bare relative require() would look in the wrong place.
+  //
+  // RingoJS also reports isModule -- it has a CommonJS shim -- but exposes no
+  // __dirname, so that case has to be excluded explicitly or the reference
+  // throws before a single test runs.
+  //
+  // Rhino has no `process`, so the environment variable is invisible there and
+  // it silently fell back to the ES6 source it cannot parse. Its shell offers
+  // no -define either, but a script can read its own `arguments`, so the entry
+  // is also accepted as the first command-line argument after runner.js.
+  //
+  // Rhino has no `process`, so the environment variable is invisible there and
+  // it silently fell back to the ES6 source it cannot parse. Its shell accepts
+  // no -define, but `java -jar rhino.jar -e 'var X=...'` evaluates in the same
+  // global scope as the script, so a global set that way is honoured here.
+  //
+  // A command-line argument is not usable: this file's body is an IIFE, so
+  // `arguments` inside it is the IIFE's own, not the shell's.
+  var entry = '../luaparse';
+  if (typeof process === 'object' && process.env && process.env.LUAPARSE_ENTRY) {
+    entry = process.env.LUAPARSE_ENTRY;
+  } else if (typeof LUAPARSE_ENTRY === 'string' && LUAPARSE_ENTRY) {
+    entry = LUAPARSE_ENTRY;
+  }
+  // Prefer a path anchored to this file. Under Node that removes any
+  // dependence on the process cwd. Not every engine that looks like a module
+  // exposes __dirname though (RingoJS does not), so this is best-effort and
+  // require() is allowed to fall back to the relative path below.
+  if (typeof __dirname === 'string' && entry.charAt(0) === '.') {
+    entry = __dirname + '/' + entry;
+  }
+  var entryFile = entry.replace(/\.js$/, '') + '.js';
+
+  var luaparse = null;
+  if (isModule) {
+    try {
+      luaparse = require(entry);
+    } catch (e) {
+      // An engine whose require() cannot resolve the anchored path (no
+      // __dirname, or a different module root) still gets a second chance
+      // with the path as given, which is relative to the runner.
+      if (typeof __dirname === 'string') throw e;
+      luaparse = require('../luaparse');
+    }
+  }
+
+  if (!isModule) {
+    if (isEngine) {
+      root.load(entryFile);
+    } else if (typeof Duktape !== 'undefined' && typeof readFile === 'function') {
+      // Duktape has no module system: makeLoader evaluates the file and hands
+      // back the exports object the UMD factory populated. It does NOT create
+      // a global, so the return value has to be used directly.
+      luaparse = makeLoader(function (filename) {
+        /*global readFile, TextDecoder */
+        return (new TextDecoder('utf-8')).decode(readFile(filename));
+      })('hluaparse', entryFile);
+    } else if (typeof __loadScript !== 'undefined') {
+      __loadScript(entryFile);
+    }
+    // `fivem-luaparse` is only addressable in bracket form; see the UMD
+    // wrapper, which assigns both names to the same object.
+    luaparse = luaparse || root.luaparse || root.hluaparse || root['fivem-luaparse'];
+  }
+
   var Spec = load('Spec', './lib/spec')
     , Newton = load('Newton', './lib/newton')
-    , luaparse = load('luaparse', '../luaparse')
     , specs = root.specs = [
         './spec/assignments'
       , './spec/break'
@@ -611,7 +692,12 @@
 
         // Load luaparse.js the way a browser does -- no `module`, no `exports` --
     // so the UMD wrapper assigns globals. require() never takes those branches.
-    if (typeof require === 'function' && !isEngine) {
+    //
+    // `process.versions.node` is the real test for a Node host, not
+    // `typeof require`: RingoJS installs a require() shim but has no fs, no vm
+    // and no process, so matching on require alone sent it into this block and
+    // it died on the first call.
+    if (nodeHost) {
       var fs = require('fs'), vm = require('vm'), pathMod = require('path');
       var umdSource = fs.readFileSync(pathMod.join(process.cwd(), 'luaparse.js'), 'utf8');
       var browserGlobal = {};
@@ -648,7 +734,11 @@
         'no global is created when define() is present');
     }
 
-    this.done(29);
+    // The total depends on the engine. Six of these assertions live in the
+    // Node-only block above, which is gated on `nodeHost`; every other engine
+    // skips it and runs 23 instead of 29. Both sides read the same flag, so
+    // the count cannot drift from the block it is counting.
+    this.done(nodeHost ? 29 : 23);
   });
 
   suite.addTest('Option validation', function() {

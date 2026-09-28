@@ -2713,6 +2713,9 @@
     },
     {
       "source": "local Дождь = {}",
+      "options": {
+        "luaVersion": "FiveM5.4"
+      },
       "result": {
         "type": "Chunk",
         "body": [
