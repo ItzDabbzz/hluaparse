@@ -1,46 +1,295 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Luaparse</title>
-    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>hluaparse</title>
+    <meta name="description" content="hluaparse - a Lua parser written in JavaScript. Parses Lua 5.1 through 5.5 plus the FiveM dialect, and returns a plain JSON abstract syntax tree.">
     <style>
-      .hero-unit .nav-pills a {
-        font-size: 70%;
-        color: #797979;
-        margin-top: 4px;
+      :root {
+        --bg: #0B0E14;
+        --bg-alt: #10151E;
+        --panel: #141A24;
+        --panel-alt: #1E2635;
+        --border: #2A3444;
+        --rule: #1A2130;
+        --text: #E6EAF2;
+        --headline: #F0F4FA;
+        --muted: #7C8697;
+        --muted-mid: #9AA5B4;
+        --accent: #5EE6A8;
+        --warn: #F0A868;
+        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+        --wrap: 52rem;
       }
-      .hero-unit .nav-pills a:hover {
-        text-decoration: underline;
+
+      *, *::before, *::after { box-sizing: border-box; }
+
+      html { -webkit-text-size-adjust: 100%; }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        font-size: 16px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
       }
-      h2, h3, h4 { margin-top: 1em; }
+
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      /* ---------- Masthead ---------- */
+
+      .masthead {
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-alt);
+      }
+
+      .masthead .inner {
+        max-width: var(--wrap);
+        margin: 0 auto;
+        padding: 1.5rem 1.25rem 0;
+      }
+
+      .brand {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.6rem;
+      }
+
+      .brand .name {
+        font-size: 1.6rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: var(--headline);
+        margin: 0;
+      }
+
+      .brand .name span { color: var(--accent); }
+
+      .brand .version {
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        color: var(--muted);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 0.1rem 0.5rem;
+      }
+
+      .tagline {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin: 0.35rem 0 1.1rem;
+        max-width: 40rem;
+      }
+
+      .nav {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin: 0 -0.3rem;
+      }
+
+      .nav ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.15rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .nav ul a {
+        display: block;
+        font-size: 0.82rem;
+        color: var(--muted);
+        padding: 0.45rem 0.6rem;
+        border-bottom: 2px solid transparent;
+      }
+
+      .nav ul a:hover {
+        color: var(--text);
+        text-decoration: none;
+        border-bottom-color: var(--border);
+      }
+
+      .nav .links {
+        display: flex;
+        gap: 0.5rem;
+        padding-bottom: 0.4rem;
+      }
+
+      .nav .links a {
+        font-size: 0.78rem;
+        font-family: var(--mono);
+        color: var(--muted-mid);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.2rem 0.55rem;
+      }
+
+      .nav .links a:hover {
+        color: var(--accent);
+        border-color: var(--accent);
+        text-decoration: none;
+      }
+
+      /* ---------- Content ---------- */
+
+      main {
+        max-width: var(--wrap);
+        margin: 0 auto;
+        padding: 2.5rem 1.25rem 4rem;
+      }
+
+      h1, h2, h3, h4 {
+        color: var(--headline);
+        line-height: 1.25;
+        letter-spacing: -0.015em;
+      }
+
+      h1 { font-size: 1.9rem; margin: 2rem 0 0.75rem; }
+      h2 { font-size: 1.3rem; margin: 2.5rem 0 0.6rem; }
+      h3 { font-size: 1.05rem; margin: 2rem 0 0.5rem; }
+      h4 { font-size: 0.95rem; margin: 1.5rem 0 0.4rem; }
+
+      p, ul, ol, blockquote { margin: 0 0 1rem; }
+      li { margin-bottom: 0.3rem; }
+      li > ul, li > ol { margin-top: 0.3rem; }
+
+      hr {
+        border: 0;
+        border-top: 1px solid var(--rule);
+        margin: 2.5rem 0;
+      }
+
+      code {
+        font-family: var(--mono);
+        font-size: 0.86em;
+        background: var(--panel-alt);
+        border: 1px solid var(--rule);
+        border-radius: 4px;
+        padding: 0.1em 0.35em;
+      }
+
+      pre {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1rem 1.1rem;
+        overflow-x: auto;
+        margin: 0 0 1.25rem;
+      }
+
+      pre code {
+        background: none;
+        border: 0;
+        padding: 0;
+        font-size: 0.85rem;
+        line-height: 1.55;
+      }
+
+      blockquote {
+        border-left: 2px solid var(--border);
+        padding-left: 1rem;
+        color: var(--muted);
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 0 0 1.5rem;
+        font-size: 0.9rem;
+      }
+
+      th, td {
+        border: 1px solid var(--rule);
+        padding: 0.45rem 0.7rem;
+        text-align: left;
+      }
+
+      th {
+        background: var(--panel);
+        color: var(--headline);
+        font-weight: 600;
+      }
+
+      tbody tr:nth-child(even) { background: rgba(20, 26, 36, 0.55); }
+
+      /* ---------- Embedded report ---------- */
+
+      .report-frame {
+        display: block;
+        width: 100%;
+        height: 34rem;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--panel);
+      }
+
+      @media (min-width: 64rem) {
+        /* Widen past the reading column for the report, but keep it bounded
+           so a full-page nyc table does not stretch across a desktop. */
+        .report-frame { width: 68rem; max-width: 100%; margin: 0 auto; height: 46rem; }
+      }
+
+      /* ---------- Footer ---------- */
+
+      .colophon {
+        border-top: 1px solid var(--border);
+        background: var(--bg-alt);
+      }
+
+      .colophon .inner {
+        max-width: var(--wrap);
+        margin: 0 auto;
+        padding: 1.5rem 1.25rem;
+        color: var(--muted);
+        font-size: 0.8rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem 1.5rem;
+        align-items: baseline;
+      }
+
+      .colophon .mark { color: var(--muted-mid); }
+
+      @media (max-width: 34rem) {
+        .nav { align-items: flex-start; }
+        h1 { font-size: 1.55rem; }
+      }
     </style>
   </head>
   <body>
-    <div class="hero-unit">
-      <div class="container">
-        <div class="row">
-          <div class="span6">
-            <h1>Luaparse</h1>
-            <p>A Lua parser written in JavaScript, originally written by Oskar Schöldström for his bachelor's thesis at Arcada.</p>
-          </div>
-          <div class="span6" style="padding-top: 35px;">
-            <div class="btn-group">
-              <a class="btn" href="https://github.com/fstirlitz/luaparse">GitHub</a>
-              <a class="btn" href="test/index.html">Tests</a>
-            </div>
-            <ul class="nav nav-pills">
-              <li><a href="index.html">Home</a></li>
-              <li><a href="coverage.html">Coverage</a></li>
-              <li><a href="examples.html">Examples</a></li>
-            </ul>
-          </div>
+    <header class="masthead">
+      <div class="inner">
+        <div class="brand">
+          <p class="name">hlua<span>parse</span></p>
+          <span class="version">v1.0.3</span>
         </div>
+        <p class="tagline">A Lua parser written in JavaScript. Parses Lua 5.1&ndash;5.5 plus the FiveM dialect and returns a plain JSON abstract syntax tree.</p>
+        <nav class="nav">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="coverage.html">Coverage</a></li>
+            <li><a href="examples.html">Examples</a></li>
+          </ul>
+          <div class="links">
+            <a href="https://github.com/ItzDabbzz/hluaparse">GitHub</a>
+            <a href="test/index.html">Tests</a>
+          </div>
+        </nav>
       </div>
-    </div>
-    <div class="container">
+    </header>
+    <main>
 <p align="center">
-  <img src="./assets/readme/hero.svg" width="100%" alt="hluaparse — a Lua parser for JavaScript supporting Lua 5.1 to 5.5 plus the FiveM dialect, with 3156 assertions and 100% coverage">
+  <img src="./assets/readme/hero.svg" width="100%" alt="hluaparse — a Lua parser for JavaScript supporting Lua 5.1 to 5.5 plus the FiveM dialect, with 3197 assertions and 100% coverage">
 </p>
 
 <p>A Lua parser written in JavaScript. Parses <strong>Lua 5.1 through 5.5</strong>, plus
@@ -343,7 +592,7 @@ end-of-input marker, and the second is the parse result.</p>
 <p><code>-c/--code</code> for a snippet, <code>-f/--file</code> for a file, <code>-b/--beautify</code> to indent the
 output, <code>-q/--quiet</code> to suppress it.</p>
 <h2 id="correctness">Correctness</h2>
-<p>The suite is <strong>3,156 assertions</strong> and CI enforces <strong>100% statement, branch,
+<p>The suite is <strong>3,197 assertions</strong> and CI enforces <strong>100% statement, branch,
 function and line coverage</strong>. Every run is also validated as well-formed TAP,
 and a run that produces no TAP at all is treated as a failure rather than a
 pass — an engine that crashes on load cannot report success.</p>
@@ -424,15 +673,14 @@ source, and <a href="https://esprima.org">Esprima</a>.</p>
 <h2 id="license">License</h2>
 <p>MIT</p>
 
-    </div>
-    <script>
-      var _gaq = [['_setAccount', 'UA-6980403-7'], ['_trackPageview']];
-      (function(d, t) {
-        var g = d.createElement(t),
-            s = d.getElementsByTagName(t)[0];
-        g.src = '//www.google-analytics.com/ga.js';
-        s.parentNode.insertBefore(g, s);
-      }(this.document, 'script'));
-    </script>
+    </main>
+    <footer class="colophon">
+      <div class="inner">
+        <span class="mark">hluaparse</span>
+        <span>A Lua parser in JavaScript &middot; MIT licensed</span>
+        <span>Originally by Oskar Schöldström, maintained by ItzDabbzz</span>
+        <a href="https://github.com/ItzDabbzz/hluaparse">github.com/ItzDabbzz/hluaparse</a>
+      </div>
+    </footer>
   </body>
 </html>

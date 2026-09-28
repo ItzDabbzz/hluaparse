@@ -1,118 +1,264 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Luaparse</title>
-  <style>
-    body {
-      font-family: arial;
-      max-width: 1000px;
-      margin: 1em auto;
-    }
-    #editor {
-      width: 50%;
-      height: 500px;
-      position: relative;
-    }
-    #tree {
-      padding-left: 2%;
-      font-size: 11px;
-    }
-    #editor, #tree {
-      float: left;
-    }
-    .ygtvlabel {
-      white-space: nowrap;
-    }
-    #parse, #analyze { display: none; }
-    th { text-align: left; }
-    table { margin-bottom: 2em; }
-    td { padding-right: 2em; }
-  </style>
-</head>
-<body>
-  <button id="parse">Parse</button>
-  <button id="analyze">Analyze</button>
-
-  <div id="results"></div>
-<script src="../luaparse.js"></script>
-<script src="js/walker.js"></script>
-<script src="https://code.jquery.com/jquery-1.8.3.min.js"></script>
-<script>
-  (function(window, $, luaparse, walker) {
-    var path = window.location.href.replace(/([^\/]+)\/([^\/]+)$/, '')
-      , script = path + 'benchmarks/lib/ParseLua.lua'
-      , ast
-      , source;
-
-    function sortStats(stats) {
-      var sortable = [];
-      for (var key in stats) if (stats.hasOwnProperty(key)) {
-        sortable.push({ type: key, count: stats[key] });
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Code statistics - hluaparse</title>
+    <meta name="description" content="AST node and operator frequency analysis for a Lua source file, built on hluaparse.">
+    <style>
+      :root {
+        --bg: #0B0E14; --bg-alt: #10151E; --panel: #141A24; --panel-alt: #1E2635;
+        --border: #2A3444; --rule: #1A2130; --text: #E6EAF2; --headline: #F0F4FA;
+        --muted: #7C8697; --muted-mid: #9AA5B4; --accent: #5EE6A8; --warn: #F0A868;
+        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
       }
-      sortable.sort(function(a, b) { return b.count - a.count; });
-      return sortable;
-    }
-
-    function createTable(name, stats) {
-      var caption = '<caption>' + name + '</caption>'
-        , thead = '<thead><tr><th>Type</th><th>Count</th></tr></thead>'
-        , tbody = '<tbody>'
-        , total = 0
-        , tfoot, res, i;
-
-      for (i = 0; i < stats.length; i++) {
-        res = stats[i];
-        total += res.count;
-        tbody += '<tr><td>' + res.type + '</td><td>' + res.count + '</td></tr>';
+      *, *::before, *::after { box-sizing: border-box; }
+      body {
+        margin: 0; background: var(--bg); color: var(--text);
+        font-family: var(--sans); font-size: 15px; line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
       }
-
-      tbody += '</tbody>';
-
-      tfoot = '<tfoot><tr><th></th><th>' + total +'</th></tr></tfoot>';
-
-      return '<table>' + caption + thead + tbody + tfoot + '</table>';
-    }
-
-    $.get(script, function(data) {
-      source = data;
-      $('#parse').show();
-    });
-
-    $('#parse').on('click', function() {
-      ast = luaparse.parse(source);
-      $('#analyze').show();
-    });
-
-    $('#analyze').on('click', function() {
-        var nodes = {}
-          , expressions = {};
-
-      function increment(stats, type) {
-        if (!stats[type]) stats[type] = 1;
-        else stats[type]++;
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .wrap { max-width: 62rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; }
+      .back { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
+      .back:hover { color: var(--accent); }
+      h1 { font-size: 1.5rem; color: var(--headline); letter-spacing: -0.02em; margin: 1rem 0 0.3rem; }
+      .lede { color: var(--muted); margin: 0 0 1.5rem; max-width: 42rem; }
+      h1 span { color: var(--accent); }
+      .panes { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
+      @media (max-width: 48rem) { .panes { grid-template-columns: 1fr; } }
+      .pane {
+        background: var(--panel); border: 1px solid var(--border);
+        border-radius: 10px; overflow: hidden;
       }
+      .pane > h2 {
+        font-size: 0.72rem; letter-spacing: 0.09em; text-transform: uppercase;
+        color: var(--muted); margin: 0; padding: 0.55rem 0.8rem;
+        border-bottom: 1px solid var(--border); background: var(--panel-alt);
+        font-weight: 600;
+      }
+      textarea {
+        display: block; width: 100%; height: 26rem; resize: vertical;
+        background: var(--bg); color: var(--text); border: 0; outline: 0;
+        font-family: var(--mono); font-size: 0.85rem; line-height: 1.55;
+        padding: 0.8rem; tab-size: 2;
+      }
+      .toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0 0 1rem; }
+      .toolbar label { font-size: 0.78rem; color: var(--muted); font-family: var(--mono); }
+      input[type="checkbox"] {
+        appearance: none;
+        width: 1rem; height: 1rem;
+        margin: 0 0.15rem 0 0;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        background: var(--panel-alt);
+        cursor: pointer;
+        vertical-align: -2px;
+      }
+      input[type="checkbox"]:checked {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+      input[type="checkbox"]:checked::after {
+        content: "\2713";
+        display: block;
+        color: var(--bg);
+        font-size: 0.72rem;
+        line-height: 1;
+        text-align: center;
+      }
+      select, button {
+        font-family: var(--mono); font-size: 0.8rem; color: var(--text);
+        background: var(--panel-alt); border: 1px solid var(--border);
+        border-radius: 6px; padding: 0.3rem 0.55rem; cursor: pointer;
+      }
+      button:hover, select:hover { border-color: var(--accent); color: var(--accent); }
+      .status { font-family: var(--mono); font-size: 0.8rem; margin-left: auto; }
+      .status.ok { color: var(--accent); }
+      .status.err { color: var(--warn); }
+      #tree { padding: 0.6rem 0.8rem; height: 26rem; overflow: auto; font-family: var(--mono); font-size: 0.8rem; }
+      details { margin: 0; }
+      summary { cursor: pointer; color: var(--muted-mid); padding: 0.1rem 0; list-style: none; }
+      summary::-webkit-details-marker { display: none; }
+      summary::before { content: "\25B8"; color: var(--muted); display: inline-block; width: 1rem; }
+      details[open] > summary::before { content: "\25BE"; }
+      summary:hover { color: var(--accent); }
+      .kids { padding-left: 1rem; border-left: 1px solid var(--rule); margin-left: 0.45rem; }
+      .k { color: var(--accent); }
+      .v { color: var(--warn); }
+      .n { color: var(--muted); }
+      .err-box { padding: 0.8rem; color: var(--warn); font-family: var(--mono); font-size: 0.8rem; }
+      table { border-collapse: collapse; width: 100%; margin: 0 0 1.5rem; font-size: 0.88rem; }
+      th, td { border: 1px solid var(--rule); padding: 0.4rem 0.65rem; text-align: left; }
+      th { background: var(--panel); color: var(--headline); font-weight: 600; }
+      tbody tr:nth-child(even) { background: rgba(20, 26, 36, 0.55); }
+      td.num { text-align: right; font-family: var(--mono); color: var(--muted-mid); }
+      tfoot td { color: var(--headline); font-weight: 600; font-family: var(--mono); }
+      .bar { display: inline-block; height: 6px; border-radius: 3px; background: var(--accent);
+             vertical-align: middle; margin-right: 0.5rem; }
+      .note { color: var(--muted); font-size: 0.85rem; }
+      code { font-family: var(--mono); font-size: 0.86em; background: var(--panel-alt);
+             border: 1px solid var(--rule); border-radius: 4px; padding: 0.1em 0.35em; }
+      pre { background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+            padding: 0.9rem 1rem; overflow-x: auto; }
+      pre code { background: none; border: 0; padding: 0; font-size: 0.84rem; }
+      .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+      @media (max-width: 48rem) { .cols2 { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <a class="back" href="../examples.html">&larr; Examples</a>
+      <h1>Code <span>statistics</span></h1>
+      <p class="lede">Parses a real Lua file and counts what came out: how many nodes of each type, and which operators appear. The walk uses <code>examples/js/walker.js</code>, the same small AST visitor the test suite uses.</p>
 
-      walker(ast, function(node) {
-        increment(nodes, node.type);
+      <div class="toolbar">
+        <button type="button" id="choose">Load a .lua file&hellip;</button>
+        <input type="file" id="picker" accept=".lua,.txt" hidden>
+        <span class="status" id="status">no file loaded</span>
+      </div>
 
-        switch (node.type) {
-          case 'BinaryExpression':
-          case 'LogicalExpression':
-          case 'UnaryExpression':
-            increment(expressions, node.operator);
-            break;
+      <div class="cols2">
+        <div>
+          <table id="nodes">
+            <caption class="note" style="caption-side:bottom;text-align:left;padding-top:0.5rem;">Node types, most common first.</caption>
+          </table>
+        </div>
+        <div>
+          <table id="operators">
+            <caption class="note" style="caption-side:bottom;text-align:left;padding-top:0.5rem;">Operators, most common first.</caption>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script src="../luaparse.js"></script>
+    <script src="js/walker.js"></script>
+    <script>
+      (function (window, document, hluaparse, walker) {
+        "use strict";
+
+        var status = document.getElementById("status"),
+            choose = document.getElementById("choose"),
+            picker = document.getElementById("picker");
+
+        function rank(stats) {
+          var rows = [], key;
+          for (key in stats) {
+            if (Object.prototype.hasOwnProperty.call(stats, key)) {
+              rows.push({ type: key, count: stats[key] });
+            }
+          }
+          rows.sort(function (a, b) { return b.count - a.count; });
+          return rows;
         }
-      });
 
-      expressions = sortStats(expressions);
-      nodes = sortStats(nodes);
+        function draw(table, rows, peak) {
+          var body = document.createElement("tbody"),
+              foot = document.createElement("tfoot"),
+              head = document.createElement("thead"),
+              headRow = document.createElement("tr"),
+              total = 0,
+              cell, row;
 
-      var $results = $('#results');
-      $results.append(createTable('Node types', nodes));
-      $results.append(createTable('Operators', expressions));
-    });
-  }(this, this.jQuery, this.luaparse, this.walker));
-</script>
-</body>
+          table.innerHTML = "";
+
+          headRow.appendChild(th("Type"));
+          headRow.appendChild(th("Count"));
+          head.appendChild(headRow);
+          table.appendChild(head);
+
+          rows.forEach(function (res) {
+            row = document.createElement("tr");
+            total += res.count;
+            cell = document.createElement("td");
+            cell.appendChild(bar(res.count, peak));
+            cell.appendChild(document.createTextNode(res.type));
+            row.appendChild(cell);
+            cell = document.createElement("td");
+            cell.className = "num";
+            cell.textContent = res.count;
+            row.appendChild(cell);
+            body.appendChild(row);
+          });
+
+          table.appendChild(body);
+
+          foot.appendChild(th("Total", "left"));
+          cell = document.createElement("td");
+          cell.className = "num";
+          cell.textContent = total;
+          foot.appendChild(cell);
+          table.appendChild(foot);
+        }
+
+        function bar(count, peak) {
+          var span = document.createElement("span");
+          span.className = "bar";
+          // Scale to the most frequent row so the column reads as a ranking
+          // rather than fifteen bars of near-identical width.
+          span.style.width = Math.max(2, Math.round(count / peak * 90)) + "px";
+          return span;
+        }
+
+        function th(text, align) {
+          var cell = document.createElement("th");
+          if (align) cell.style.textAlign = align;
+          cell.textContent = text;
+          return cell;
+        }
+
+        function analyse(source, name) {
+          var ast, nodes = {}, operators = {}, count = 0;
+          try {
+            ast = hluaparse.parse(source);
+          } catch (err) {
+            status.className = "status err";
+            status.textContent = err.message;
+            return;
+          }
+
+          walker(ast, function (node) {
+            count++;
+            if (!nodes[node.type]) nodes[node.type] = 1;
+            else nodes[node.type]++;
+            switch (node.type) {
+              case "BinaryExpression":
+              case "LogicalExpression":
+              case "UnaryExpression":
+                if (!operators[node.operator]) operators[node.operator] = 1;
+                else operators[node.operator]++;
+                break;
+            }
+          });
+
+          var nodeRows = rank(nodes), opRows = rank(operators);
+          // One peak for both tables. Scaling each table to its own maximum
+          // makes a count of 1 look like a full bar next to a neighbouring
+          // table where 1 is a dot, which misreads as "rare" vs "common".
+          var peak = Math.max(
+            nodeRows.length ? nodeRows[0].count : 0,
+            opRows.length ? opRows[0].count : 0,
+            1
+          );
+          draw(document.getElementById("nodes"), nodeRows, peak);
+          draw(document.getElementById("operators"), opRows, peak);
+          status.className = "status ok";
+          status.textContent = name + " - " + count + " nodes";
+        }
+
+        choose.addEventListener("click", function () { picker.click(); });
+
+        picker.addEventListener("change", function () {
+          var file = picker.files && picker.files[0];
+          if (!file) return;
+          var reader = new window.FileReader();
+          reader.onload = function () { analyse(String(reader.result), file.name); };
+          reader.readAsText(file);
+        });
+      }(this, this.document, this.hluaparse || this["fivem-luaparse"], this.walker));
+    </script>
+  </body>
 </html>
