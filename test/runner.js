@@ -56,9 +56,28 @@
     }
   };
 
+  // The library is resolved after the loader is defined, because on
+  // script-loading engines it has to be evaluated first and then looked up
+  // under its exported global name.
+  var luaparse = isModule ? require('../luaparse') : null;
+
+  if (!isModule) {
+    if (isEngine) root.load('../luaparse.js');
+    else if (typeof Duktape !== 'undefined' && typeof readFile === 'function') {
+      makeLoader(function (filename) {
+        /*global readFile, TextDecoder */
+        return (new TextDecoder('utf-8')).decode(readFile(filename));
+      })('hluaparse', '../luaparse.js');
+    } else if (typeof __loadScript !== 'undefined') {
+      __loadScript('../luaparse.js');
+    }
+    // `fivem-luaparse` is only addressable in bracket form; see the UMD
+    // wrapper, which assigns both names to the same object.
+    luaparse = root.luaparse || root.hluaparse || root['fivem-luaparse'];
+  }
+
   var Spec = load('Spec', './lib/spec')
     , Newton = load('Newton', './lib/newton')
-    , luaparse = load('luaparse', '../luaparse')
     , specs = root.specs = [
         './spec/assignments'
       , './spec/break'
@@ -648,7 +667,9 @@
         'no global is created when define() is present');
     }
 
-    this.done(29);
+    // The count depends on the engine: the `vm`/`fs` based UMD assertions are
+    // Node-only, so scripting engines legitimately run fewer of them.
+    this.done(isEngine ? 23 : 29);
   });
 
   suite.addTest('Option validation', function() {
