@@ -25,9 +25,6 @@ jobs:
         with:
           node-version: '24'
           registry-url: https://registry.npmjs.org/
-          # Trusted publishing: npm exchanges this workflow's OIDC identity
-          # for a short-lived token, so no NPM_TOKEN secret is involved.
-          id-token: write
 
       # Trusted publishing needs npm >= 11.5.1 and Node >= 22.14.0. Node 24
       # satisfies the Node half, but the npm that ships with it is not
@@ -82,12 +79,16 @@ jobs:
           echo "tarball contains the ES5 build"
 
       # Trusted publishing: the only credential is this job's OIDC identity,
-      # which npm exchanges for a short-lived token. Nothing long-lived is
-      # stored in the repository, so there is no secret to leak or rotate.
-      # The tarball built above is what ships, so what is published is the
-      # exact artifact the gates were run against.
+      # granted by the id-token: write permission at job level. npm exchanges
+      # it for a short-lived token, so no long-lived secret exists in the
+      # repository. --provenance is what makes that identity meaningful: it
+      # attests the tarball was built here, by this workflow, at this commit.
+      #
+      # Without authentication npm answers a PUT with a 404 that reads as
+      # "no permission" rather than "not logged in", so a failure here looks
+      # like a permissions problem when it is a credentials one.
       - name: Publish to npm
-        run: npm publish ./staging/*.tgz --access public
+        run: npm publish ./staging/*.tgz --access public --provenance
 
       - name: Confirm it landed
         run: |
