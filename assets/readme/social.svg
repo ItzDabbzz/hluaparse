@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640"
+     role="img" aria-labelledby="ogTitle ogDesc">
+  <title id="ogTitle">hluaparse</title>
+  <desc id="ogDesc">A Lua parser for JavaScript. Lua 5.1 to 5.5 plus the FiveM dialect, tested on 15 engine configurations.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B0E14"/>
+      <stop offset="0.55" stop-color="#10151E"/>
+      <stop offset="1" stop-color="#0B0E14"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5EE6A8"/>
+      <stop offset="1" stop-color="#F0A868"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="640" fill="url(#bg)"/>
+
+  <!-- faint grid, kept low contrast so text stays readable when scaled down -->
+  <g stroke="#1A2130" stroke-width="1">
+    <path d="M0 160H1280M0 320H1280M0 480H1280"/>
+    <path d="M320 0V640M640 0V640M960 0V640"/>
+  </g>
+
+  <!-- top rule: the project's signature two-tone -->
+  <rect x="0" y="0" width="1280" height="6" fill="url(#accent)"/>
+
+  <!-- eyebrow -->
+  <text x="88" y="150" font-size="19" letter-spacing="3.4" fill="#7C8697"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace">LUA PARSER FOR JAVASCRIPT</text>
+
+  <!-- wordmark -->
+  <text x="84" y="272" font-size="132" font-weight="700" fill="#F0F4FA" letter-spacing="-3"
+        font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">hluaparse</text>
+
+  <!-- tagline -->
+  <text x="88" y="336" font-size="30" fill="#E6EAF2"
+        font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">Lua 5.1 to 5.5, plus the FiveM dialect.</text>
+  <text x="88" y="382" font-size="30" fill="#9AA5B4"
+        font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">One parser, every runtime you ship to.</text>
+
+
+  <!-- parse tree: the real AST for the snippet below, above the metrics.
+       Box widths are sized from the measured text widths (LocalStatement
+       115.5, Identifier x 99.7, BinaryExpression 132) plus 32 of padding. -->
+  <g transform="translate(772,326)">
+    <rect x="106" y="0" width="148" height="42" rx="8" fill="#1E2635" stroke="#2A3444" stroke-width="1"/>
+    <text x="122" y="27" font-size="15" fill="#F0A868"
+          font-family="ui-monospace, SFMono-Regular, Menlo, monospace">LocalStatement</text>
+
+    <path d="M180 42V60" stroke="#2A3444" stroke-width="1.5" fill="none"/>
+    <path d="M180 60H58" stroke="#2A3444" stroke-width="1.5" fill="none"/>
+    <path d="M58 60V76" stroke="#2A3444" stroke-width="1.5" fill="none"/>
+    <path d="M180 60H268" stroke="#2A3444" stroke-width="1.5" fill="none"/>
+    <path d="M268 60V76" stroke="#2A3444" stroke-width="1.5" fill="none"/>
+
+    <rect x="0" y="76" width="116" height="42" rx="8" fill="#1E2635" stroke="#2A3444" stroke-width="1"/>
+    <text x="8" y="103" font-size="15" fill="#E6EAF2"
+          font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Identifier x</text>
+
+    <rect x="180" y="76" width="172" height="42" rx="8" fill="#1E2635" stroke="#2A3444" stroke-width="1"/>
+    <text x="188" y="103" font-size="15" fill="#E6EAF2"
+          font-family="ui-monospace, SFMono-Regular, Menlo, monospace">BinaryExpression</text>
+    <text x="330" y="103" font-size="15" fill="#F0A868"
+          font-family="ui-monospace, SFMono-Regular, Menlo, monospace">+</text>
+  </g>
+
+  <!-- a real parse, so the card shows the product and not just a name -->
+  <g transform="translate(88,438)">
+    <rect x="0" y="0" width="600" height="146" rx="10" fill="#141A24" stroke="#2A3444" stroke-width="1"/>
+    <text x="22" y="34" font-size="15" fill="#5EE6A8"
+          font-family="ui-monospace, SFMono-Regular, Menlo, monospace">luaparse.parse("local x = 1 + 2")</text>
+    <text x="22" y="70" font-size="15" fill="#F0A868"
+          font-family="ui-monospace, SFMono-Regular, Menlo, monospace">LocalStatement</text>
+    <text x="188" y="70" font-size="15" fill="#7C8697"
+          font-family="ui-monospace, SFMono-Regular, Menlo, monospace">variables</text>
+    <text x="278" y="70" font-size="15" fill="#E6EAF2"
+          font-family="ui-monospace, SFMono-Regular, Menlo, monospace">x</text>
+    <text x="188" y="96" font-size="15" fill="#7C8697"
+          font-family="ui-monospace, SFMono-Regular, Menlo, monospace">init</text>
+    <text x="278" y="96" font-size="15" fill="#E6EAF2"
+          font-family="ui-monospace, SFMono-Regular, Menlo, monospace">BinaryExpression</text>
+    <text x="22" y="126" font-size="15" fill="#7C8697"
+          font-family="ui-monospace, SFMono-Regular, Menlo, monospace">operator +   left 1   right 2</text>
+  </g>
+
+  <!-- metrics, 2 x 2, below the tree. The right column runs 326-640, so the
+       tree takes 326-444 and the metrics fit in 470-616. -->
+  <g transform="translate(772,470)">
+    <text x="0" y="38" font-size="42" font-weight="700" fill="#5EE6A8"
+          font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">3,197</text>
+    <text x="0" y="62" font-size="16" fill="#7C8697"
+          font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">assertions</text>
+
+    <text x="240" y="38" font-size="42" font-weight="700" fill="#F0A868"
+          font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">15</text>
+    <text x="240" y="62" font-size="16" fill="#7C8697"
+          font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">engines tested</text>
+
+    <text x="0" y="122" font-size="42" font-weight="700" fill="#5EE6A8"
+          font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">100%</text>
+    <text x="0" y="146" font-size="16" fill="#7C8697"
+          font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">coverage</text>
+
+    <text x="240" y="122" font-size="42" font-weight="700" fill="#F0A868"
+          font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">5.1&#8211;5.5</text>
+    <text x="240" y="146" font-size="16" fill="#7C8697"
+          font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif">Lua versions</text>
+  </g>
+</svg>
